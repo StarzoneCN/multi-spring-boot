@@ -12,4 +12,9 @@
     <select id="selectById" resultMap="baseMap">
         select id, content from test a where a.id = #{id}
     </select>
+    <select id="selectByContent" resultType="com.example.demo.multi.springBoot.test.entity.Test">
+        SELECT *
+        FROM test
+        WHERE content = #{content}
+    </select>
 </mapper>

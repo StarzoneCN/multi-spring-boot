@@ -4,10 +4,12 @@ package com.example.demo.multi.springBoot.test.service;
 import com.example.demo.multi.springBoot.test.entity.Test;
 import com.example.demo.multi.springBoot.test.mapper.TestMapper;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
+import java.rmi.activation.UnknownObjectException;
 
 /**
  * @author: Li Hongxing
@@ -28,15 +30,28 @@ public class TestServiceImpl implements TestService {
     }
 
     @Override
+    @Transactional(isolation = Isolation.READ_UNCOMMITTED)
+    public Test selectByContent(String content) {
+        return testMapper.selectByContent(content);
+    }
+
+    @Override
     public int insert(Test record) {
         return testMapper.insert(record);
     }
 
+    /**
+     * MANDATORY策略：当事务回滚时会抛出IllegalTransactionStateException
+     * REQUIRES_NEW策略：如果RE异常没有在调用方（方法）中捕获（try...catch...）调用方的事务也会被触发
+     * @param record
+     * @return
+     */
     @Override
-    @Transactional(propagation = Propagation.REQUIRED)
+    @Transactional(propagation = Propagation.REQUIRES_NEW)
     public int update(Test record){
-        if (record == null) {
-            throw new  IndexOutOfBoundsException();
+        int count = testMapper.insert(record);
+        if (count > 0) {
+            Integer.parseInt("48fdsaf");
         }
         return 1;
     }

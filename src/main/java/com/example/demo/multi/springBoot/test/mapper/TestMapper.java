@@ -9,5 +9,7 @@ public interface TestMapper {
 
     Test selectById(@Param("id") Integer id);
 
+    Test selectByContent(@Param("content") String content);
+
     int insert(Test record);
 }
