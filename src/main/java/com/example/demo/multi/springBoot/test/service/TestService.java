@@ -2,7 +2,10 @@ package com.example.demo.multi.springBoot.test.service;
 
 import com.example.demo.multi.springBoot.test.entity.Test;
 import org.springframework.transaction.annotation.Isolation;
+import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
+
+import javax.naming.NamingException;
 
 public interface TestService {
 
@@ -13,5 +16,6 @@ public interface TestService {
 
     int insert(Test record);
 
-    int update(Test record);
+    @Transactional(propagation = Propagation.REQUIRES_NEW)
+    int subInsert(Test record) throws NamingException;
 }

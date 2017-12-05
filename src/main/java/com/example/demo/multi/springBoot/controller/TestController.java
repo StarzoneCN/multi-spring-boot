@@ -3,7 +3,6 @@ package com.example.demo.multi.springBoot.controller;
 import com.example.demo.multi.springBoot.test.entity.Test;
 import com.example.demo.multi.springBoot.test.service.TestService;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.transaction.interceptor.TransactionAspectSupport;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -30,7 +29,7 @@ public class TestController {
         /*测试事务传播方式*/
         test.setContent("subContent");
         try {
-            testService.update(test);
+            testService.subInsert(test);
         } catch (Exception e) {
             e.printStackTrace();
 // TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();

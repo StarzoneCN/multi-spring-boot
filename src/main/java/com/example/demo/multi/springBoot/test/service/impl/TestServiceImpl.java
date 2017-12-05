@@ -1,15 +1,15 @@
-package com.example.demo.multi.springBoot.test.service;
+package com.example.demo.multi.springBoot.test.service.impl;
 
 
 import com.example.demo.multi.springBoot.test.entity.Test;
 import com.example.demo.multi.springBoot.test.mapper.TestMapper;
+import com.example.demo.multi.springBoot.test.service.TestService;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
-import java.rmi.activation.UnknownObjectException;
 
 /**
  * @author: Li Hongxing
@@ -48,7 +48,7 @@ public class TestServiceImpl implements TestService {
      */
     @Override
     @Transactional(propagation = Propagation.REQUIRES_NEW)
-    public int update(Test record){
+    public int subInsert(Test record){
         int count = testMapper.insert(record);
         if (count > 0) {
             Integer.parseInt("48fdsaf");
