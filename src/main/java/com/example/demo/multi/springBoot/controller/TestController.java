@@ -25,10 +25,9 @@ public class TestController {
     public Integer insert(Test test){
         System.out.println("-----------------before insert-----------------");
         int successInsertCount = testService.insert(test);
-        if (successInsertCount > 0) {
-            /*当抛出RuntimeException时，事务回滚*/
-            throw new  IndexOutOfBoundsException();
-        }
+
+        /*测试事务传播方式*/
+        testService.update(null);
         return 1;
     }
 }

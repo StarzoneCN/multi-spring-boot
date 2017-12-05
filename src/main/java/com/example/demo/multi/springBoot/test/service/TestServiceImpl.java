@@ -4,6 +4,8 @@ package com.example.demo.multi.springBoot.test.service;
 import com.example.demo.multi.springBoot.test.entity.Test;
 import com.example.demo.multi.springBoot.test.mapper.TestMapper;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
 
@@ -28,5 +30,14 @@ public class TestServiceImpl implements TestService {
     @Override
     public int insert(Test record) {
         return testMapper.insert(record);
+    }
+
+    @Override
+    @Transactional(propagation = Propagation.REQUIRED)
+    public int update(Test record){
+        if (record == null) {
+            throw new  IndexOutOfBoundsException();
+        }
+        return 1;
     }
 }

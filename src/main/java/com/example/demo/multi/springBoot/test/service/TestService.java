@@ -7,4 +7,6 @@ public interface TestService {
     Test selectById(Integer id);
 
     int insert(Test record);
+
+    int update(Test record);
 }
