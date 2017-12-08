@@ -1,7 +1,12 @@
 package com.example.demo.multi.springBoot.controller;
 
+import com.example.demo.multi.springBoot.BeanExample;
+import com.example.demo.multi.springBoot.util.ApplicationContextUtil;
+import org.springframework.context.ApplicationContext;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+
+import javax.annotation.Resource;
 
 /**
  * @author: Li Hongxing
@@ -13,8 +18,10 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("hello")
 public class HelloController {
 
-   @RequestMapping
+    @RequestMapping
     public String index() {
+        ApplicationContext applicationContext = ApplicationContextUtil.getApplicationContext();
+        BeanExample beanExample = applicationContext.getBean("beanExample", BeanExample.class);
         return "Conquer the world from here!";
     }
 }
