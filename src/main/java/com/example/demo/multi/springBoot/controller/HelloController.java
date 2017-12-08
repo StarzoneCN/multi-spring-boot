@@ -20,11 +20,23 @@ import java.util.Map;
 @RequestMapping("hello")
 public class HelloController {
 
+    /*@Autowired和@Resource都支持@Scope的*/
+    @Resource private BeanExample exampleA;
+    @Resource private BeanExample exampleB;
+
     @RequestMapping
     public String index() {
         ApplicationContext applicationContext = ApplicationContextUtil.getApplicationContext();
         BeanExample beanExample = applicationContext.getBean("beanExample", BeanExample.class);
         System.out.println("----beanExample----> " + beanExample.toString());
+
+        /*测试单例*/
+        beanExample.setProp1("input");
+        BeanExample beanExample2 = applicationContext.getBean("beanExample", BeanExample.class);
+        System.out.println("----exampleB.prop1----> " + exampleB.getProp1());
+
+        exampleA.setProp1("abc");
+        System.out.println("----beanExample2.prop1----> " + beanExample2.getProp1());
 
         Map<String, Job> jobs = applicationContext.getBeansOfType(Job.class);
         System.out.println("----jobs----> " + jobs.toString());
