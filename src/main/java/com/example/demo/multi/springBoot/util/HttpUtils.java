@@ -16,10 +16,7 @@ import org.apache.http.impl.client.HttpClients;
 import org.apache.http.message.BasicNameValuePair;
 import org.springframework.util.ObjectUtils;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStreamReader;
+import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -37,7 +34,7 @@ public class HttpUtils {
 
     private static final String USER_AGENT = "Mozilla/5.0";
 
-    public static HttpEntity makeMultipartEntity(Map<String, String> params, final Map<String, File> files) {
+    public static HttpEntity makeMultipartEntity(Map<String, String> params, final Map<String, File> files, Map<String, InputStream> iss) {
         MultipartEntityBuilder builder = MultipartEntityBuilder.create();
         builder.setMode(HttpMultipartMode.BROWSER_COMPATIBLE); //如果有SocketTimeoutException等情况，可修改这个枚举
 
@@ -56,6 +53,13 @@ public class HttpUtils {
                 builder.addPart(entry.getKey(), new FileBody(entry.getValue()));
             }
         }
+
+        if (iss != null && iss.size() > 0) {
+            Set<Entry<String, InputStream>> entries = iss.entrySet();
+            for (Entry<String, InputStream> entry : entries) {
+                builder.addBinaryBody(entry.getKey(), entry.getValue());
+            }
+        }
         return builder.build();
     }
 
@@ -67,11 +71,30 @@ public class HttpUtils {
         return responseStr;
     }
 
+    public static String postInputStreams(String url, Map<String, String> params, Map<String, InputStream> iss) throws IOException {
+        CloseableHttpClient httpClient = HttpClients.createDefault();
+        HttpResponse httpResponse = postInputSteams(httpClient, url, params, iss);
+        String responseStr = getResponseStr(httpResponse);
+        httpClient.close();
+        return responseStr;
+    }
+
     public static HttpResponse postFile(HttpClient httpClient, String url, Map<String, String> params, final Map<String, File> files) throws IOException {
         HttpPost httpPost = new HttpPost(url);
         httpPost.addHeader("User-Agent", USER_AGENT);
 
-        HttpEntity entity = makeMultipartEntity(params, files);
+        HttpEntity entity = makeMultipartEntity(params, files, null);
+        httpPost.setEntity(entity);
+
+        HttpResponse httpResponse = httpClient.execute(httpPost);
+        return httpResponse;
+    }
+
+    public static HttpResponse postInputSteams(HttpClient httpClient, String url, Map<String, String> params, Map<String, InputStream> iss) throws IOException {
+        HttpPost httpPost = new HttpPost(url);
+        httpPost.addHeader("User-Agent", USER_AGENT);
+
+        HttpEntity entity = makeMultipartEntity(params, null, iss);
         httpPost.setEntity(entity);
 
         HttpResponse httpResponse = httpClient.execute(httpPost);

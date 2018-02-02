@@ -12,10 +12,7 @@ import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.http.message.BasicNameValuePair;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStreamReader;
+import java.io.*;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -59,10 +56,10 @@ public class HttpClientTest {
         Map<String, String> params = new HashMap<>();
         params.put("username", "hongxing");
 
-        Map<String, File> files = new HashMap<>(2);
-        files.put("file", new File("C:\\Users\\starz\\Desktop\\temp/aaaa.txt"));
+        Map<String, InputStream> iss = new HashMap<>(2);
+        iss.put("file", new FileInputStream(new File("C:\\Users\\starz\\Desktop\\temp/aaaa.txt")));
 
-        String responseStr = HttpUtils.postFile("http://localhost/hello/post", params, files);
+        String responseStr = HttpUtils.postInputStreams("http://localhost/hello/post", params, iss);
         System.out.println(responseStr);
     }
 }
