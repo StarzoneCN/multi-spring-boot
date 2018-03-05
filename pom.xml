@@ -4,11 +4,11 @@
 	<modelVersion>4.0.0</modelVersion>
 
 	<groupId>com.example</groupId>
-	<artifactId>demo-multi-spring-boot</artifactId>
+	<artifactId>bm-hdfs-callback</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 	<packaging>jar</packaging>
 
-	<name>demo-multi-spring-boot</name>
+	<name>bm-hdfs-callback</name>
 	<description>Demo project for Spring Boot</description>
 
 	<parent>
