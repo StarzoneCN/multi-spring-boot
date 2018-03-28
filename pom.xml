@@ -51,6 +51,30 @@
 					<skipTests>true</skipTests>
 				</configuration>
 			</plugin>
+
+			<plugin>
+				<artifactId>maven-assembly-plugin</artifactId>
+				<configuration>
+					<descriptorRefs>
+						<descriptorRef>jar-with-dependencies</descriptorRef>
+					</descriptorRefs>
+					<archive>
+						<manifest>
+							<!-- 此处指定main方法入口的class -->
+							<mainClass>com.example.demo.multi.springBoot.DemoMultiSpringBootApplication</mainClass>
+						</manifest>
+					</archive>
+					</configuration>
+				<executions>
+					<execution>
+						<id>make-assembly</id>
+						<phase>package</phase>
+						<goals>
+							<goal>assembly</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
 		</plugins>
 	</build>
 
