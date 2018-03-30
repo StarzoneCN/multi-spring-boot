@@ -22,6 +22,8 @@
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 		<java.version>1.8</java.version>
+
+		<springBoot_hadoop.version>2.5.0.RELEASE</springBoot_hadoop.version>
 	</properties>
 
 	<dependencies>
@@ -34,6 +36,13 @@
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-test</artifactId>
 			<scope>test</scope>
+		</dependency>
+
+		<!--spring-hadoop-->
+		<dependency>
+			<groupId>org.springframework.data</groupId>
+			<artifactId>spring-data-hadoop-boot</artifactId>
+			<version>${springBoot_hadoop.version}</version>
 		</dependency>
 	</dependencies>
 
