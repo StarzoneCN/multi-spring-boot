@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.demo.multi.springBoot.mapper.SsqMapper">
+
+	<!-- 通用查询映射结果 -->
+	<resultMap id="BaseResultMap" type="com.example.demo.multi.springBoot.entity.Ssq">
+		<id column="id" property="id" />
+		<result column="r0" property="r0" />
+		<result column="r1" property="r1" />
+		<result column="r2" property="r2" />
+		<result column="r3" property="r3" />
+		<result column="r4" property="r4" />
+		<result column="r5" property="r5" />
+		<result column="b0" property="b0" />
+	</resultMap>
+
+</mapper>
