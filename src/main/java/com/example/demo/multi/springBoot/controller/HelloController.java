@@ -3,6 +3,8 @@ package com.example.demo.multi.springBoot.controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import javax.servlet.http.HttpServletRequest;
+
 /**
  * @author: Li Hongxing
  * @description: Hello world！
@@ -14,7 +16,7 @@ import org.springframework.web.bind.annotation.RestController;
 public class HelloController {
 
    @RequestMapping
-    public String index() {
+    public String index(HttpServletRequest request) {
         return "Conquer the world from here!";
     }
 }
