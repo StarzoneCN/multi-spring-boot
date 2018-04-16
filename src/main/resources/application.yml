@@ -3,7 +3,7 @@ spring:
        username: root
        password: 3
        url: jdbc:mysql://localhost:3306/lottery?serverTimezone=GMT
-       driver-class-name: com.mysql.jdbc.Driver
+       driver-class-name: com.mysql.cj.jdbc.Driver
 
 mybatis:
   mapper-locations: classpath*:/com/example/demo/multi/springBoot/mapper/xml/**Mapper.xml

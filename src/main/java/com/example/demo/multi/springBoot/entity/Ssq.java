@@ -3,8 +3,6 @@ package com.example.demo.multi.springBoot.entity;
 import java.io.Serializable;
 
 import com.baomidou.mybatisplus.activerecord.Model;
-import org.springframework.stereotype.Component;
-
 import java.io.Serializable;
 
 /**
@@ -15,7 +13,6 @@ import java.io.Serializable;
  * @author hongxing
  * @since 2018-04-16
  */
-@Component
 public class Ssq extends Model<Ssq> {
 
     private static final long serialVersionUID = 1L;
@@ -28,6 +25,7 @@ public class Ssq extends Model<Ssq> {
 	private Integer r4;
 	private Integer r5;
 	private Integer b0;
+	private String str;
 
 
 	public String getId() {
@@ -94,6 +92,14 @@ public class Ssq extends Model<Ssq> {
 		this.b0 = b0;
 	}
 
+	public String getStr() {
+		return str;
+	}
+
+	public void setStr(String str) {
+		this.str = str;
+	}
+
 	@Override
 	protected Serializable pkVal() {
 		return this.id;
@@ -110,6 +116,7 @@ public class Ssq extends Model<Ssq> {
 			", r4=" + r4 +
 			", r5=" + r5 +
 			", b0=" + b0 +
+			", str=" + str +
 			"}";
 	}
 }

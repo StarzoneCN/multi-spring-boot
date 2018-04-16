@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.nio.charset.Charset;
-import java.util.HashSet;
+import java.util.*;
 
 /**
  * @author: LiHongxing
@@ -97,5 +97,63 @@ public class SsqContoller {
             return elements.first().child(0).children();
         }
         return null;
+    }
+
+    @RequestMapping("fs")
+    public String fillStr(){
+        List<Ssq> list = iSsqService.selectList(null);
+        for (Ssq ssq : list) {
+            ssq.setStr(ssq.getR0()
+                    + "-" + ssq.getR1()
+                    + "-" + ssq.getR2()
+                    + "-" + ssq.getR3()
+                    + "-" + ssq.getR4()
+                    + "-" + ssq.getR5()
+                    + "+" + ssq.getB0());
+        }
+        iSsqService.updateBatchById(list);
+        return "success";
+    }
+
+    @RequestMapping("nd")
+    public Map<String, Map<Integer, Integer>> neatenData(){
+        List<Ssq> list = iSsqService.selectList(null);
+        Map<Integer, Integer> mapR = new HashMap<>(64);
+        Map<Integer, Integer> mapB = new HashMap<>(16);
+        for (int i = 1; i < 34; i++) {
+            if (i < 17) {
+                mapB.put(i, 0);
+            }
+            mapR.put(i, 0);
+        }
+        for (Ssq ssq : list) {
+            Integer r0 = ssq.getR0();
+            mapR.put(r0, mapR.get(r0) + 1);
+            Integer r1 = ssq.getR1();
+            mapR.put(r1, mapR.get(r1) + 1);
+            Integer r2 = ssq.getR2();
+            mapR.put(r2, mapR.get(r2) + 1);
+            Integer r3 = ssq.getR3();
+            mapR.put(r3, mapR.get(r3) + 1);
+            Integer r4 = ssq.getR4();
+            mapR.put(r4, mapR.get(r4) + 1);
+            Integer r5 = ssq.getR5();
+            mapR.put(r5, mapR.get(r5) + 1);
+            Integer b0 = ssq.getB0();
+            mapB.put(b0, mapB.get(b0) + 1);
+        }
+        Map<Integer, Integer> mapR1 = new HashMap<>(64);
+        for (Map.Entry<Integer, Integer> e : mapR.entrySet()) {
+            mapR1.put(e.getValue(), e.getKey());
+        }
+        Map<Integer, Integer> mapB1 = new HashMap<>(64);
+        for (Map.Entry<Integer, Integer> e : mapB.entrySet()) {
+            mapB1.put(e.getValue(), e.getKey());
+        }
+
+        Map<String, Map<Integer, Integer>> map = new HashMap<>(2);
+        map.put("red", mapR1);
+        map.put("blue", mapB1);
+        return map;
     }
 }

@@ -12,6 +12,7 @@
 		<result column="r4" property="r4" />
 		<result column="r5" property="r5" />
 		<result column="b0" property="b0" />
+		<result column="str" property="str" />
 	</resultMap>
 
 </mapper>
