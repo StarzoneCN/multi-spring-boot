@@ -116,7 +116,7 @@ public class SsqContoller {
     }
 
     @RequestMapping("nd")
-    public Map<String, Map<Integer, Integer>> neatenData(){
+    public Map<String, List<Map.Entry<Integer, Integer>>> neatenData(){
         List<Ssq> list = iSsqService.selectList(null);
         Map<Integer, Integer> mapR = new HashMap<>(64);
         Map<Integer, Integer> mapB = new HashMap<>(16);
@@ -142,18 +142,24 @@ public class SsqContoller {
             Integer b0 = ssq.getB0();
             mapB.put(b0, mapB.get(b0) + 1);
         }
-        Map<Integer, Integer> mapR1 = new HashMap<>(64);
-        for (Map.Entry<Integer, Integer> e : mapR.entrySet()) {
-            mapR1.put(e.getValue(), e.getKey());
-        }
-        Map<Integer, Integer> mapB1 = new HashMap<>(64);
-        for (Map.Entry<Integer, Integer> e : mapB.entrySet()) {
-            mapB1.put(e.getValue(), e.getKey());
-        }
+        List<Map.Entry<Integer, Integer>> lr = new ArrayList<>(mapR.entrySet());
+        lr.sort(new Comparator<Map.Entry<Integer, Integer>>() {
+            @Override
+            public int compare(Map.Entry<Integer, Integer> o1, Map.Entry<Integer, Integer> o2) {
+                return o1.getValue() - o2.getValue();
+            }
+        });
+        List<Map.Entry<Integer, Integer>> lb = new ArrayList<>(mapB.entrySet());
+        lb.sort(new Comparator<Map.Entry<Integer, Integer>>() {
+            @Override
+            public int compare(Map.Entry<Integer, Integer> o1, Map.Entry<Integer, Integer> o2) {
+                return o1.getValue() - o2.getValue();
+            }
+        });
 
-        Map<String, Map<Integer, Integer>> map = new HashMap<>(2);
-        map.put("red", mapR1);
-        map.put("blue", mapB1);
+        Map<String, List<Map.Entry<Integer, Integer>>> map = new HashMap<>(2);
+        map.put("red", lr);
+        map.put("blue", lb);
         return map;
     }
 }
