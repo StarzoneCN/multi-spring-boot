@@ -1,8 +1,15 @@
 package com.example.demo.multi.springBoot.config;
 
+import org.apache.tomcat.websocket.server.DefaultServerEndpointConfigurator;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.socket.server.standard.ServerEndpointExporter;
+
+import javax.websocket.Endpoint;
+import javax.websocket.server.ServerApplicationConfig;
+import javax.websocket.server.ServerEndpointConfig;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * websocket配置文件-spring boot整合ws需要
@@ -13,10 +20,22 @@ import org.springframework.web.socket.server.standard.ServerEndpointExporter;
  * @modefied:
  */
 @Configuration
-public class WebSocketConfig {
+public class WebSocketConfig implements ServerApplicationConfig{
 
     @Bean
     public ServerEndpointExporter serverEndpointExporter(){
         return new ServerEndpointExporter();
+    }
+
+    @Override
+    public Set<ServerEndpointConfig> getEndpointConfigs(Set<Class<? extends Endpoint>> scanned) {
+        Set<ServerEndpointConfig> set = new HashSet<>(2);
+//        ServerEndpointConfig sec = new de
+        return null;
+    }
+
+    @Override
+    public Set<Class<?>> getAnnotatedEndpointClasses(Set<Class<?>> scanned) {
+        return null;
     }
 }
