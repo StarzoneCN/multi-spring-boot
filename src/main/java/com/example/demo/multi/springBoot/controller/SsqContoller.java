@@ -1,9 +1,12 @@
 package com.example.demo.multi.springBoot.controller;
 
-import cn.hutool.core.util.StrUtil;
 import cn.hutool.http.HttpUtil;
+import cn.hutool.json.JSONArray;
+import cn.hutool.json.JSONObject;
+import cn.hutool.json.JSONUtil;
 import com.example.demo.multi.springBoot.entity.Ssq;
 import com.example.demo.multi.springBoot.service.ISsqService;
+import com.example.demo.multi.springBoot.util.StringUtils;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -46,7 +49,7 @@ public class SsqContoller {
 
     private void parseAndSaveData(String url){
         Ssq ssq = new Ssq();
-        for (String s : StrUtil.splitToArray(url, '/')) {
+        for (String s : StringUtils.splitToArray(url, '/')) {
             int index = s.indexOf(".shtml");
             if ( index > 0) {
                 String id = s.substring(0, index);
@@ -103,13 +106,7 @@ public class SsqContoller {
     public String fillStr(){
         List<Ssq> list = iSsqService.selectList(null);
         for (Ssq ssq : list) {
-            ssq.setStr(ssq.getR0()
-                    + "-" + ssq.getR1()
-                    + "-" + ssq.getR2()
-                    + "-" + ssq.getR3()
-                    + "-" + ssq.getR4()
-                    + "-" + ssq.getR5()
-                    + "+" + ssq.getB0());
+            ssq.setStr(StringUtils.assemblySsq2Str(ssq));
         }
         iSsqService.updateBatchById(list);
         return "success";
@@ -161,5 +158,40 @@ public class SsqContoller {
         map.put("red", lr);
         map.put("blue", lb);
         return map;
+    }
+
+    @RequestMapping("update")
+    public String updateData() {
+        String responseStr = HttpUtil.get("http://f.apiplus.net/ssq-2.json", Charset.forName("UTF-8"));
+        JSONObject jsonObject = JSONUtil.parseObj(responseStr);
+        JSONArray jsonArray = jsonObject.getJSONArray("data");
+        List<Ssq> listToUpdate = new ArrayList<>(32);
+        for (Object obj : jsonArray) {
+            JSONObject jsonObj = (JSONObject)obj;
+            String expectStr = jsonObj.getStr("expect");
+            if (StringUtils.isBlank(expectStr)) {
+                continue;
+            }
+            Ssq ssq = new Ssq();
+            ssq.setId(expectStr.substring(2));
+
+            String opencode = jsonObj.getStr("opencode");
+            String[] opencodes = StringUtils.splitToArray(opencode, ',');
+
+            ssq.setR0(Integer.parseInt(opencodes[0]));
+            ssq.setR1(Integer.parseInt(opencodes[1]));
+            ssq.setR2(Integer.parseInt(opencodes[2]));
+            ssq.setR3(Integer.parseInt(opencodes[3]));
+            ssq.setR4(Integer.parseInt(opencodes[4]));
+
+            String lastRedAndBlue = opencodes[5];
+            ssq.setR5(Integer.parseInt(lastRedAndBlue.substring(0, 2)));
+            ssq.setB0(Integer.parseInt(lastRedAndBlue.substring(3)));
+
+            ssq.setStr(StringUtils.assemblySsq2Str(ssq));
+            listToUpdate.add(ssq);
+        }
+        iSsqService.insertOrUpdateBatch(listToUpdate);
+        return "success";
     }
 }
