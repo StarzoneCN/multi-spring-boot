@@ -1,6 +1,10 @@
 package com.example.demo.multi.springBoot;
 
+import cn.hutool.core.collection.CollectionUtil;
 import org.junit.Test;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * @author: LiHongxing
@@ -12,6 +16,11 @@ public class EasyTest {
 
     @Test
     public void testStr(){
-        System.out.println("18042.shtml".substring(0, "18042.shtml".indexOf(".shtml")));
+        List<Integer> list = new ArrayList<>();
+        list.add(1);
+        list.add(2);
+        list.add(3);
+        list.add(4);
+        System.out.println(CollectionUtil.join(list, "-"));
     }
 }

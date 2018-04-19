@@ -1,12 +1,17 @@
 package com.example.demo.multi.springBoot.controller;
 
+import cn.hutool.core.collection.CollectionUtil;
 import cn.hutool.http.HttpUtil;
 import cn.hutool.json.JSONArray;
 import cn.hutool.json.JSONObject;
 import cn.hutool.json.JSONUtil;
+import com.baomidou.mybatisplus.mapper.EntityWrapper;
+import com.example.demo.multi.springBoot.entity.ProbabilityRank;
 import com.example.demo.multi.springBoot.entity.Ssq;
+import com.example.demo.multi.springBoot.service.IProbabilityRankService;
 import com.example.demo.multi.springBoot.service.ISsqService;
 import com.example.demo.multi.springBoot.util.StringUtils;
+import com.example.demo.multi.springBoot.vo.CodeSortedVo;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -29,6 +34,8 @@ import java.util.*;
 public class SsqContoller {
     @Autowired
     private ISsqService iSsqService;
+    @Autowired
+    private IProbabilityRankService iProbabilityRankService;
 
     @RequestMapping("init")
     public String initData() {
@@ -45,6 +52,151 @@ public class SsqContoller {
         }
 
         return "success";
+    }
+
+    @RequestMapping("fs")
+    public String fillStr(){
+        List<Ssq> list = iSsqService.selectList(null);
+        for (Ssq ssq : list) {
+            ssq.setStr(StringUtils.assemblySsq2Str(ssq));
+        }
+        iSsqService.updateBatchById(list);
+        return "success";
+    }
+
+    @RequestMapping("nd")
+    public CodeSortedVo neatenData(){
+        List<Ssq> list = iSsqService.selectList(null);
+        return sortCode(list);
+    }
+
+    @RequestMapping("update")
+    public String updateData() {
+        String responseStr = HttpUtil.get("http://f.apiplus.net/ssq-2.json", Charset.forName("UTF-8"));
+        JSONObject jsonObject = JSONUtil.parseObj(responseStr);
+        JSONArray jsonArray = jsonObject.getJSONArray("data");
+        List<Ssq> listToUpdate = new ArrayList<>(32);
+        for (Object obj : jsonArray) {
+            JSONObject jsonObj = (JSONObject)obj;
+            String expectStr = jsonObj.getStr("expect");
+            if (StringUtils.isBlank(expectStr)) {
+                continue;
+            }
+            Ssq ssq = new Ssq();
+            ssq.setId(expectStr.substring(2));
+
+            String opencode = jsonObj.getStr("opencode");
+            String[] opencodes = StringUtils.splitToArray(opencode, ',');
+
+            ssq.setR0(Integer.parseInt(opencodes[0]));
+            ssq.setR1(Integer.parseInt(opencodes[1]));
+            ssq.setR2(Integer.parseInt(opencodes[2]));
+            ssq.setR3(Integer.parseInt(opencodes[3]));
+            ssq.setR4(Integer.parseInt(opencodes[4]));
+
+            String lastRedAndBlue = opencodes[5];
+            ssq.setR5(Integer.parseInt(lastRedAndBlue.substring(0, 2)));
+            ssq.setB0(Integer.parseInt(lastRedAndBlue.substring(3)));
+
+            ssq.setStr(StringUtils.assemblySsq2Str(ssq));
+            listToUpdate.add(ssq);
+        }
+        iSsqService.insertOrUpdateBatch(listToUpdate);
+        return "success";
+    }
+
+    @RequestMapping("ipr")
+    public String initProbabilityRank() {
+        List<Ssq> list = iSsqService.selectList(null);
+        List<ProbabilityRank> pRanks = new ArrayList<>();
+        CodeSortedVo vo;
+        for (int i = 0; i < list.size(); i++) {
+            Ssq ssq = list.get(i);
+            ProbabilityRank pr = new ProbabilityRank();
+            pr.setSsqId(ssq.getId());
+            vo = sortCode(list.subList(0, i + 1));
+            pr = setTimesCodeOpened(vo, pr);
+
+            Map<Integer, Integer> rankingMapR = new TreeMap<>();
+            Map<Integer, Integer> rankingMapB = new TreeMap<>();
+            Map<Integer, Integer> codeSortMapR = new TreeMap<>();
+            Map<Integer, Integer> codeSortMapB = new TreeMap<>();
+            for (int j=1; j <= vo.getRedSortedList().size(); j++) {
+                if (j <= 16) {
+                    rankingMapB.put(j, vo.getBlueSortedList().get(j-1).getKey());
+                    codeSortMapB.put(vo.getBlueSortedList().get(j-1).getKey(), j);
+                }
+                rankingMapR.put(j, vo.getRedSortedList().get(j-1).getKey());
+                codeSortMapR.put(vo.getRedSortedList().get(j-1).getKey(), j);
+            }
+            pr = setRanking4Pr(pr, rankingMapR, rankingMapB);
+
+            pr = setCodeSort4Pr(pr, codeSortMapR, codeSortMapB);
+
+            pr = getOpenCodeSort(ssq, pr, codeSortMapR, codeSortMapB);
+            pRanks.add(pr);
+        }
+        iProbabilityRankService.insertOrUpdateBatch(pRanks);
+        return "success";
+    }
+
+    /**
+     * 统计概率分布
+     * @param ssqId
+     * @return
+     */
+    @RequestMapping("cocs")
+    public String computeOpenCodeSort(String ssqId) {
+        Map<String, Map<String, Integer>> map = getComputedOpenCodeSort(ssqId);
+        return JSONUtil.toJsonStr(map);
+    }
+
+    @RequestMapping("rcocs")
+    public String reverseComputedOpenCodeSort(String ssqId) {
+        Map<String, Map<String, Integer>> map = getComputedOpenCodeSort(ssqId);
+        Map<Integer,Integer> mapR = new HashMap<>();
+        Map<Integer,Integer> mapB = new HashMap<>();
+        for (Map.Entry<String, Integer> e : map.get("red").entrySet()) {
+            mapR.put(e.getValue(), Integer.parseInt(e.getKey()));
+        }
+        for (Map.Entry<String, Integer> entry : map.get("blue").entrySet()) {
+            mapB.put(entry.getValue(), Integer.parseInt(entry.getKey()));
+        }
+       Map<String, Map<Integer,Integer>> returnMap = new HashMap<>(2);
+        returnMap.put("red", mapR);
+        returnMap.put("blue", mapB);
+        return JSONUtil.toJsonStr(returnMap);
+    }
+
+    private Map<String, Map<String, Integer>> getComputedOpenCodeSort(String ssqId) {
+        EntityWrapper<ProbabilityRank> ew = null;
+        if (StringUtils.isNotBlank(ssqId)) {
+            ew = new EntityWrapper();
+            ew.le("ssq_id", ssqId);
+        }
+        List<ProbabilityRank> prs = iProbabilityRankService.selectList(ew);
+        Map<String, Integer> mapR = new TreeMap<>();
+        Map<String, Integer> mapB = new TreeMap<>();
+        for (int i=1; i<=33; i++) {
+            if (i<=16) {
+                mapB.put(Integer.toString(i), 0);
+            }
+            mapR.put(Integer.toString(i), 0);
+        }
+        for (ProbabilityRank pr : prs) {
+            String openCodeSort = pr.getOpenCodeSort();
+            String[] redProbs = openCodeSort.substring(0, openCodeSort.lastIndexOf('+')).split("-");
+            for (String redProb : redProbs) {
+                mapR.put(redProb, mapR.get(redProb) + 1);
+            }
+            String blueProb = openCodeSort.substring(openCodeSort.lastIndexOf('+') + 1);
+            mapB.put(blueProb, mapB.get(blueProb) + 1);
+        }
+
+        Map<String, Map<String, Integer>> map = new HashMap<>(2);
+        map.put("red", mapR);
+        map.put("blue", mapB);
+        return map;
     }
 
     private void parseAndSaveData(String url){
@@ -102,21 +254,10 @@ public class SsqContoller {
         return null;
     }
 
-    @RequestMapping("fs")
-    public String fillStr(){
-        List<Ssq> list = iSsqService.selectList(null);
-        for (Ssq ssq : list) {
-            ssq.setStr(StringUtils.assemblySsq2Str(ssq));
-        }
-        iSsqService.updateBatchById(list);
-        return "success";
-    }
-
-    @RequestMapping("nd")
-    public Map<String, List<Map.Entry<Integer, Integer>>> neatenData(){
-        List<Ssq> list = iSsqService.selectList(null);
-        Map<Integer, Integer> mapR = new HashMap<>(64);
-        Map<Integer, Integer> mapB = new HashMap<>(16);
+    private CodeSortedVo sortCode(List<Ssq> list) {
+        CodeSortedVo vo = new CodeSortedVo();
+        Map<Integer, Integer> mapR = new TreeMap();
+        Map<Integer, Integer> mapB = new TreeMap();
         for (int i = 1; i < 34; i++) {
             if (i < 17) {
                 mapB.put(i, 0);
@@ -154,44 +295,46 @@ public class SsqContoller {
             }
         });
 
-        Map<String, List<Map.Entry<Integer, Integer>>> map = new HashMap<>(2);
-        map.put("red", lr);
-        map.put("blue", lb);
-        return map;
+        vo.setMapR(mapR);
+        vo.setMapB(mapB);
+        vo.setRedSortedList(lr);
+        vo.setBlueSortedList(lb);
+        return vo;
     }
 
-    @RequestMapping("update")
-    public String updateData() {
-        String responseStr = HttpUtil.get("http://f.apiplus.net/ssq-2.json", Charset.forName("UTF-8"));
-        JSONObject jsonObject = JSONUtil.parseObj(responseStr);
-        JSONArray jsonArray = jsonObject.getJSONArray("data");
-        List<Ssq> listToUpdate = new ArrayList<>(32);
-        for (Object obj : jsonArray) {
-            JSONObject jsonObj = (JSONObject)obj;
-            String expectStr = jsonObj.getStr("expect");
-            if (StringUtils.isBlank(expectStr)) {
-                continue;
-            }
-            Ssq ssq = new Ssq();
-            ssq.setId(expectStr.substring(2));
+    private ProbabilityRank setTimesCodeOpened(CodeSortedVo vo, ProbabilityRank pr) {
+        Map<String, Map<Integer, Integer>> codeOpenTimesMap = new HashMap<>();
+        codeOpenTimesMap.put("red", vo.getMapR());
+        codeOpenTimesMap.put("blue", vo.getMapB());
+        pr.setTimesCodeOpened(JSONUtil.toJsonStr(codeOpenTimesMap));
+        return pr;
+    }
 
-            String opencode = jsonObj.getStr("opencode");
-            String[] opencodes = StringUtils.splitToArray(opencode, ',');
+    private ProbabilityRank setCodeSort4Pr(ProbabilityRank pr, Map<Integer, Integer> codeSortMapR, Map<Integer, Integer> codeSortMapB) {
+        Map<String, Map<Integer, Integer>> codeSortMap = new HashMap<>();
+        codeSortMap.put("red", codeSortMapR);
+        codeSortMap.put("blue", codeSortMapB);
+        pr.setCodeSort(JSONUtil.toJsonStr(codeSortMap));
+        return pr;
+    }
 
-            ssq.setR0(Integer.parseInt(opencodes[0]));
-            ssq.setR1(Integer.parseInt(opencodes[1]));
-            ssq.setR2(Integer.parseInt(opencodes[2]));
-            ssq.setR3(Integer.parseInt(opencodes[3]));
-            ssq.setR4(Integer.parseInt(opencodes[4]));
+    private ProbabilityRank setRanking4Pr(ProbabilityRank pr, Map<Integer, Integer> rankingMapR, Map<Integer, Integer> rankingMapB) {
+        Map<String, Map<Integer, Integer>> rankingMap = new HashMap<>();
+        rankingMap.put("red", rankingMapR);
+        rankingMap.put("blue", rankingMapB);
+        pr.setRanking(JSONUtil.toJsonStr(rankingMap));
+        return pr;
+    }
 
-            String lastRedAndBlue = opencodes[5];
-            ssq.setR5(Integer.parseInt(lastRedAndBlue.substring(0, 2)));
-            ssq.setB0(Integer.parseInt(lastRedAndBlue.substring(3)));
-
-            ssq.setStr(StringUtils.assemblySsq2Str(ssq));
-            listToUpdate.add(ssq);
-        }
-        iSsqService.insertOrUpdateBatch(listToUpdate);
-        return "success";
+    private ProbabilityRank getOpenCodeSort(Ssq ssq, ProbabilityRank pr, Map<Integer, Integer> codeSortMapR, Map<Integer, Integer> codeSortMapB) {
+        Set<Integer> openCodeSort = new TreeSet<>();
+        openCodeSort.add(codeSortMapR.get(ssq.getR0()));
+        openCodeSort.add(codeSortMapR.get(ssq.getR1()));
+        openCodeSort.add(codeSortMapR.get(ssq.getR2()));
+        openCodeSort.add(codeSortMapR.get(ssq.getR3()));
+        openCodeSort.add(codeSortMapR.get(ssq.getR4()));
+        openCodeSort.add(codeSortMapR.get(ssq.getR5()));
+        pr.setOpenCodeSort(CollectionUtil.join(openCodeSort, "-") + "+" + codeSortMapB.get(ssq.getB0()));
+        return pr;
     }
 }
