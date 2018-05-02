@@ -1,0 +1,42 @@
+openapi: 3.0.0
+info:
+  title: Sample API- 这是一个标题
+  description: # 添加一个markdown标题 <br> * 第一条： <br> * 第二条： Optional multiline or single-line description in [CommonMark](http://commonmark.org/help/) or HTML.
+  version: 0.0.1
+  info: 这里是info，不是道支不支持markdown：*强调*
+
+servers:
+  - url: http://localhost
+    description: 本地服务器
+  - url: http://staging-api.example.com
+    description: Optional server description, e.g. Internal staging server for testing
+
+paths:
+  /hello:
+    get:
+      summary: Hello Controller index方法的概述.
+      description: Hello Controller index方法的详细描述.
+      parameters:
+        - name: name
+          required: false
+          description: 参数name的描述
+      responses:
+        '200':    # status code
+          description: A String 表示返回信息
+          content:
+            text/plain:
+              schema:
+                type: string
+
+components:
+  schemas:
+    User:
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+      # Both properties are required
+      required:
+        - id
+        - name
