@@ -1,5 +1,6 @@
 package com.example.demo.multi.springBoot.controller;
 
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -13,8 +14,8 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("hello")
 public class HelloController {
 
-   @RequestMapping
-    public String index() {
+   @RequestMapping("{id}")
+    public String index(@PathVariable Integer id) {
         return "Conquer the world from here!";
     }
 }

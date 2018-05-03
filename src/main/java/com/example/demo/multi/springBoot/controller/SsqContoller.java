@@ -5,7 +5,9 @@ import cn.hutool.http.HttpUtil;
 import cn.hutool.json.JSONArray;
 import cn.hutool.json.JSONObject;
 import cn.hutool.json.JSONUtil;
+import com.baomidou.mybatisplus.mapper.Condition;
 import com.baomidou.mybatisplus.mapper.EntityWrapper;
+import com.baomidou.mybatisplus.mapper.Wrapper;
 import com.example.demo.multi.springBoot.entity.ProbabilityRank;
 import com.example.demo.multi.springBoot.entity.Ssq;
 import com.example.demo.multi.springBoot.service.IProbabilityRankService;
@@ -17,10 +19,13 @@ import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.nio.charset.Charset;
+import java.text.DecimalFormat;
 import java.util.*;
 
 /**
@@ -72,7 +77,7 @@ public class SsqContoller {
 
     @RequestMapping("update")
     public String updateData() {
-        String responseStr = HttpUtil.get("http://f.apiplus.net/ssq-2.json", Charset.forName("UTF-8"));
+        String responseStr = HttpUtil.get("http://f.apiplus.net/ssq-20.json", Charset.forName("UTF-8"));
         JSONObject jsonObject = JSONUtil.parseObj(responseStr);
         JSONArray jsonArray = jsonObject.getJSONArray("data");
         List<Ssq> listToUpdate = new ArrayList<>(32);
@@ -105,8 +110,14 @@ public class SsqContoller {
         return "success";
     }
 
-    @RequestMapping("ipr")
-    public String initProbabilityRank() {
+    /**
+     * 拍讯处理
+     * @param rowFrom 开始插入位置：ssq_id
+     * @return
+     */
+    @RequestMapping("ipr/{from}")
+    public String initProbabilityRank(@PathVariable("from") String rowFrom) {
+        rowFrom = StringUtils.isNotBlank(rowFrom)? rowFrom : "11118";
         List<Ssq> list = iSsqService.selectList(null);
         List<ProbabilityRank> pRanks = new ArrayList<>();
         CodeSortedVo vo;
@@ -134,7 +145,9 @@ public class SsqContoller {
             pr = setCodeSort4Pr(pr, codeSortMapR, codeSortMapB);
 
             pr = getOpenCodeSort(ssq, pr, codeSortMapR, codeSortMapB);
-            pRanks.add(pr);
+            if (rowFrom.compareTo(pr.getSsqId()) <= 0) {
+                pRanks.add(pr);
+            }
         }
         iProbabilityRankService.insertOrUpdateBatch(pRanks);
         return "success";
@@ -336,5 +349,112 @@ public class SsqContoller {
         openCodeSort.add(codeSortMapR.get(ssq.getR5()));
         pr.setOpenCodeSort(CollectionUtil.join(openCodeSort, "-") + "+" + codeSortMapB.get(ssq.getB0()));
         return pr;
+    }
+
+    /**
+     * 某概率排序值出现的概率
+     * @return
+     */
+    @GetMapping("rta")
+    public Map<String, Map<Integer, String>> realTimeAnalyze(){
+        int totalR = 0;
+        int totalB = 0;
+        Map<Integer, Integer> mapR = new HashMap<>();
+        Map<Integer, Integer> mapB = new HashMap<>();
+        List<ProbabilityRank> prs = iProbabilityRankService.selectList(null);
+        for (int i=1; i<=33; i++) {
+            mapR.put(i, 0);
+            if (i<17){
+                mapB.put(i, 0);
+            }
+        }
+        for (ProbabilityRank pr : prs) {
+            String openCodeSort = pr.getOpenCodeSort();
+            String[] codes = openCodeSort.split("-");
+            for (int i=0; i<codes.length; i++){
+                if (i<5){
+                    int key = Integer.parseInt(codes[i]);
+                    mapR.put(key, mapR.get(key) + 1);
+                } else {
+                    String[] rAndB = codes[i].split("\\+");
+                    int keyR5 = Integer.parseInt(rAndB[0]);
+                    int keyB0 = Integer.parseInt(rAndB[1]);
+                    mapR.put(keyR5, mapR.get(keyR5) + 1);
+                    mapB.put(keyB0, mapB.get(keyB0) + 1);
+                }
+                totalR++;
+            }
+            totalB++;
+        }
+        Map<Integer, String> mapPercentR = new HashMap<>();
+        Map<Integer, String> mapPercentB = new HashMap<>();
+        DecimalFormat df = new DecimalFormat("######0.00");
+        for (Map.Entry<Integer, Integer> entry : mapR.entrySet()) {
+            double percent = ((double)entry.getValue()) / totalR;
+            mapPercentR.put(entry.getKey(), df.format(percent * 100) + "%");
+        }
+        for (Map.Entry<Integer, Integer> entry : mapB.entrySet()) {
+            double percent = ((double)entry.getValue()) / totalB;
+            mapPercentB.put(entry.getKey(), df.format(percent * 100) + "%");
+        }
+        Map<String, Map<Integer, String>> result = new HashMap<>(2);
+        result.put("red", mapPercentR);
+        result.put("blue", mapPercentB);
+        return result;
+    }
+
+    /**
+     * 某概率排序值出现的概率+排序
+     * @return
+     */
+    @GetMapping("rta/sort")
+    public Map<String, Map<String, Integer>> realTimeAnalyzeAndSort(String rowFrom){
+        rowFrom = StringUtils.isNotBlank(rowFrom)? rowFrom : "03001";
+        int totalR = 0;
+        int totalB = 0;
+        Map<Integer, Integer> mapR = new HashMap<>();
+        Map<Integer, Integer> mapB = new HashMap<>();
+        Wrapper<ProbabilityRank> wrapper = Condition.create();
+        wrapper.ge("ssq_id", rowFrom);
+        List<ProbabilityRank> prs = iProbabilityRankService.selectList(wrapper);
+        for (int i=1; i<=33; i++) {
+            mapR.put(i, 0);
+            if (i<17){
+                mapB.put(i, 0);
+            }
+        }
+        for (ProbabilityRank pr : prs) {
+            String openCodeSort = pr.getOpenCodeSort();
+            String[] codes = openCodeSort.split("-");
+            for (int i=0; i<codes.length; i++){
+                if (i<5){
+                    int key = Integer.parseInt(codes[i]);
+                    mapR.put(key, mapR.get(key) + 1);
+                } else {
+                    String[] rAndB = codes[i].split("\\+");
+                    int keyR5 = Integer.parseInt(rAndB[0]);
+                    int keyB0 = Integer.parseInt(rAndB[1]);
+                    mapR.put(keyR5, mapR.get(keyR5) + 1);
+                    mapB.put(keyB0, mapB.get(keyB0) + 1);
+                }
+                totalR++;
+            }
+            totalB++;
+        }
+        Map<String, Integer> mapPercentR = new TreeMap<>();
+        Map<String, Integer> mapPercentB = new TreeMap<>();
+        DecimalFormat df = new DecimalFormat("######0.00");
+        for (Map.Entry<Integer, Integer> entry : mapR.entrySet()) {
+            double percent = ((double)entry.getValue()) / totalR;
+            mapPercentR.put(df.format(percent * 100) + "%", entry.getKey());
+        }
+        for (Map.Entry<Integer, Integer> entry : mapB.entrySet()) {
+            double percent = ((double)entry.getValue()) / totalB;
+            mapPercentB.put(df.format(percent * 100) + "%", entry.getKey());
+        }
+        Map<String, Map<String, Integer>> result = new HashMap<>(2);
+        result.put("red", mapPercentR);
+        result.put("blue", mapPercentB);
+        return result;
     }
 }
