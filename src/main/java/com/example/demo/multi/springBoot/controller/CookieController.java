@@ -1,8 +1,5 @@
 package com.example.demo.multi.springBoot.controller;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.session.ExpiringSession;
-import org.springframework.session.FindByIndexNameSessionRepository;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -23,8 +20,8 @@ import java.util.Map;
 @RestController
 public class CookieController {
 
-    @Autowired
-    private FindByIndexNameSessionRepository<? extends ExpiringSession> findByIndexNameSessionRepository;
+    // @Autowired
+    // private FindByIndexNameSessionRepository<? extends ExpiringSession> findByIndexNameSessionRepository;
 
     @RequestMapping("/test/cookie")
     public String cookie(@RequestParam("browser") String browser, HttpServletRequest request, HttpSession session) {
@@ -47,7 +44,8 @@ public class CookieController {
 
     @RequestMapping("/test/findByUsername")
     public Map findByUsername(@RequestParam String username) {
-        Map<String, ? extends ExpiringSession> usersSessions = findByIndexNameSessionRepository.findByIndexNameAndIndexValue(FindByIndexNameSessionRepository.PRINCIPAL_NAME_INDEX_NAME, username);
-        return usersSessions;
+        // Map<String, ? extends ExpiringSession> usersSessions = findByIndexNameSessionRepository.findByIndexNameAndIndexValue(FindByIndexNameSessionRepository.PRINCIPAL_NAME_INDEX_NAME, username);
+        // return usersSessions;
+        return null;
     }
 }
