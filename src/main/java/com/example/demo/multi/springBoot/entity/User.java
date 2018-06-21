@@ -1,5 +1,7 @@
 package com.example.demo.multi.springBoot.entity;
 
+import java.util.Date;
+
 /**
  * @author: LiHongxing
  * @email: lihongxing@bluemoon.com.cn
@@ -8,11 +10,29 @@ package com.example.demo.multi.springBoot.entity;
  */
 public class User {
 
+    private Integer id;
     private String name;
     private int age;
     private String addr;
     private String remarks;
     private int gender;
+    private String birthday;
+
+    public String getBirthday() {
+        return birthday;
+    }
+
+    public void setBirthday(String birthday) {
+        this.birthday = birthday;
+    }
+
+    public Integer getId() {
+        return id;
+    }
+
+    public void setId(Integer id) {
+        this.id = id;
+    }
 
     public String getName() {
         return name;
