@@ -30,4 +30,9 @@ public class EasyTest {
         pq.addAll(list);
         System.out.println(pq.toString());
     }
+
+    public static void main(String[] args) {
+        String str = "12345678";
+        System.out.println(str.substring(str.length()-2));
+    }
 }
