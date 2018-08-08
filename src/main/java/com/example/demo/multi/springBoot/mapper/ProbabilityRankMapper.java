@@ -9,8 +9,8 @@ import org.apache.ibatis.annotations.Mapper;
  * 概率排序 Mapper 接口
  * </p>
  *
- * @author hongxing
- * @since 2018-04-19
+ * @author LiHongxing
+ * @since 2018-08-08
  */
 @Mapper
 public interface ProbabilityRankMapper extends BaseMapper<ProbabilityRank> {

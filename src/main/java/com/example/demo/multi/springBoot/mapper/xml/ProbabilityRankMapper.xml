@@ -9,6 +9,7 @@
 		<result column="code_sort" property="codeSort" />
 		<result column="ranking" property="ranking" />
 		<result column="open_code_sort" property="openCodeSort" />
+		<result column="sort_sum" property="sortSum" />
 		<result column="update_time" property="updateTime" />
 	</resultMap>
 

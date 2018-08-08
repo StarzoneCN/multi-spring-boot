@@ -11,8 +11,8 @@ import org.springframework.stereotype.Service;
  * 概率排序 服务实现类
  * </p>
  *
- * @author hongxing
- * @since 2018-04-19
+ * @author LiHongxing
+ * @since 2018-08-08
  */
 @Service
 public class ProbabilityRankServiceImpl extends ServiceImpl<ProbabilityRankMapper, ProbabilityRank> implements IProbabilityRankService {

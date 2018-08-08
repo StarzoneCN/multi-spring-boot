@@ -8,8 +8,8 @@ import com.baomidou.mybatisplus.service.IService;
  * 概率排序 服务类
  * </p>
  *
- * @author hongxing
- * @since 2018-04-19
+ * @author LiHongxing
+ * @since 2018-08-08
  */
 public interface IProbabilityRankService extends IService<ProbabilityRank> {
 

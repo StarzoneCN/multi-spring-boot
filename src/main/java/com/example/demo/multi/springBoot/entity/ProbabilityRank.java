@@ -14,8 +14,8 @@ import java.io.Serializable;
  * 概率排序
  * </p>
  *
- * @author hongxing
- * @since 2018-04-19
+ * @author LiHongxing
+ * @since 2018-08-08
  */
 @TableName("probability_rank")
 public class ProbabilityRank extends Model<ProbabilityRank> {
@@ -30,12 +30,12 @@ public class ProbabilityRank extends Model<ProbabilityRank> {
 	@TableField("times_code_opened")
 	private String timesCodeOpened;
     /**
-     * 按号码排序
+     * 按号码排序（如：号码1：排第20）
      */
 	@TableField("code_sort")
 	private String codeSort;
     /**
-     * 按概率排序
+     * 按概率排序（如：概率第20：号码1）
      */
 	private String ranking;
     /**
@@ -43,6 +43,11 @@ public class ProbabilityRank extends Model<ProbabilityRank> {
      */
 	@TableField("open_code_sort")
 	private String openCodeSort;
+    /**
+     * 蓝色号码6个排序号码之和
+     */
+	@TableField("sort_sum")
+	private Integer sortSum;
 	@TableField("update_time")
 	private Date updateTime;
 
@@ -87,6 +92,14 @@ public class ProbabilityRank extends Model<ProbabilityRank> {
 		this.openCodeSort = openCodeSort;
 	}
 
+	public Integer getSortSum() {
+		return sortSum;
+	}
+
+	public void setSortSum(Integer sortSum) {
+		this.sortSum = sortSum;
+	}
+
 	public Date getUpdateTime() {
 		return updateTime;
 	}
@@ -108,6 +121,7 @@ public class ProbabilityRank extends Model<ProbabilityRank> {
 			", codeSort=" + codeSort +
 			", ranking=" + ranking +
 			", openCodeSort=" + openCodeSort +
+			", sortSum=" + sortSum +
 			", updateTime=" + updateTime +
 			"}";
 	}
