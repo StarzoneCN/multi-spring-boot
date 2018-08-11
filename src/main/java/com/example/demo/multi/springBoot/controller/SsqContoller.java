@@ -27,6 +27,7 @@ import org.springframework.web.bind.annotation.RestController;
 import java.nio.charset.Charset;
 import java.text.DecimalFormat;
 import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * @author: LiHongxing
@@ -348,6 +349,7 @@ public class SsqContoller {
         openCodeSort.add(codeSortMapR.get(ssq.getR4()));
         openCodeSort.add(codeSortMapR.get(ssq.getR5()));
         pr.setOpenCodeSort(CollectionUtil.join(openCodeSort, "-") + "+" + codeSortMapB.get(ssq.getB0()));
+        pr.setSortSum(openCodeSort.stream().reduce(0, (pre, i) -> {return pre + i;}));
         return pr;
     }
 

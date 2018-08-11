@@ -44,7 +44,7 @@ public class ProbabilityRank extends Model<ProbabilityRank> {
 	@TableField("open_code_sort")
 	private String openCodeSort;
     /**
-     * 蓝色号码6个排序号码之和
+     * 红色号码排序之和，如：6-13-21-22-26-27+12， sortSum = 6 + 13 + 21 + 22 + 26 + 27
      */
 	@TableField("sort_sum")
 	private Integer sortSum;
