@@ -14,7 +14,7 @@
 	<parent>
 		<groupId>org.springframework.boot</groupId>
 		<artifactId>spring-boot-starter-parent</artifactId>
-		<version>1.5.9.RELEASE</version>
+		<version>2.0.4.RELEASE</version>
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
 
@@ -28,6 +28,18 @@
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-web</artifactId>
+		</dependency>
+
+		<dependency>
+			<groupId>com.ctrip.framework.apollo</groupId>
+			<artifactId>apollo-client</artifactId>
+			<version>1.0.0</version>
+		</dependency>
+
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-configuration-processor</artifactId>
+			<optional>true</optional>
 		</dependency>
 
 		<dependency>
@@ -52,7 +64,7 @@
 				</configuration>
 			</plugin>
 
-			<plugin>
+			<!--<plugin>
 				<artifactId>maven-assembly-plugin</artifactId>
 				<configuration>
 					<descriptorRefs>
@@ -60,7 +72,7 @@
 					</descriptorRefs>
 					<archive>
 						<manifest>
-							<!-- 此处指定main方法入口的class -->
+							&lt;!&ndash; 此处指定main方法入口的class &ndash;&gt;
 							<mainClass>com.example.demo.multi.springBoot.DemoMultiSpringBootApplication</mainClass>
 						</manifest>
 					</archive>
@@ -74,9 +86,7 @@
 						</goals>
 					</execution>
 				</executions>
-			</plugin>
+			</plugin>-->
 		</plugins>
 	</build>
-
-
 </project>
