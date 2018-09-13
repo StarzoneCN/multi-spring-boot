@@ -15,6 +15,6 @@ public class HelloController {
 
    @RequestMapping
     public String index() {
-        return "Conquer the world from here!";
+        return "Let's go ! Conquer the world from here!";
     }
 }
