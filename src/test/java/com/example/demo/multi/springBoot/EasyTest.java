@@ -1,11 +1,6 @@
 package com.example.demo.multi.springBoot;
 
-import cn.hutool.json.JSONUtil;
 import org.junit.Test;
-import sun.applet.Main;
-
-import java.util.HashMap;
-import java.util.Map;
 
 /**
  * @author: LiHongxing
