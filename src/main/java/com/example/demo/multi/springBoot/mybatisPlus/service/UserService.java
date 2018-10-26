@@ -20,4 +20,6 @@ public interface UserService extends IService<User> {
     List<User> getByMap(Map<String, Object> map);
 
     int removeBatchIds(Collection ids);
+
+    List sortByNameAndAge();
 }

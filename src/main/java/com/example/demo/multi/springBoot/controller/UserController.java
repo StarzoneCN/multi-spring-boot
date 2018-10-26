@@ -24,6 +24,7 @@ import java.util.Map;
 @RequestMapping("/user")
 public class UserController {
     private static final String MSG_USER_NOT_EXISTS = "用户不存在";
+    private static final String MSG_FAIL_TO_QUERY = "查询失败";
 
     @Autowired
     private UserService userService;
@@ -61,5 +62,20 @@ public class UserController {
     @DeleteMapping("remove/by/ids")
     public Integer removeBatchIds(Integer ... id){
         return userService.removeBatchIds(Arrays.asList(id));
+    }
+
+    @GetMapping("orderByNameAndAge")
+    public CommonResponse orderByNameAndAge(){
+        CommonResponse c = new CommonResponse();
+        try {
+            List list = userService.sortByNameAndAge();
+            c.setSuccess(true);
+            c.setData(list);
+            return c;
+        } catch (Exception e) {
+            c.setSuccess(false);
+            c.setMessage(MSG_FAIL_TO_QUERY);
+            return c;
+        }
     }
 }
