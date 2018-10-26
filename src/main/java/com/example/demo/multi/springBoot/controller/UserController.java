@@ -5,12 +5,9 @@ import com.example.demo.multi.springBoot.mybatisPlus.entity.User;
 import com.example.demo.multi.springBoot.mybatisPlus.service.UserService;
 import com.example.demo.multi.springBoot.mybatisPlus.vo.CommonResponse;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.*;
 
-import org.springframework.web.bind.annotation.RestController;
-
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -45,7 +42,7 @@ public class UserController {
         return commonResponse;
     }
 
-    @GetMapping("by/name")
+    @GetMapping("get/by/name")
     public CommonResponse<User> getByName(String name){
         Map<String, Object> paramMap = new HashMap<>(2);
         paramMap.put("name", name);
@@ -59,5 +56,10 @@ public class UserController {
         commonResponse.setSuccess(false);
         commonResponse.setMessage(MSG_USER_NOT_EXISTS);
         return commonResponse;
+    }
+
+    @DeleteMapping("remove/by/ids")
+    public Integer removeBatchIds(Integer ... id){
+        return userService.removeBatchIds(Arrays.asList(id));
     }
 }

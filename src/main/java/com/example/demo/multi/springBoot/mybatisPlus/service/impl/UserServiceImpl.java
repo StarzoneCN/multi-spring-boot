@@ -7,6 +7,7 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
@@ -27,5 +28,10 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
     @Override
     public List<User> getByMap(Map<String, Object> map){
         return userMapper.selectByMap(map);
+    }
+
+    @Override
+    public int removeBatchIds(Collection ids){
+        return userMapper.deleteBatchIds(ids);
     }
 }
