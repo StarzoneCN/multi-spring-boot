@@ -109,10 +109,15 @@ public class CodeGenerator {
             @Override
             public String outputFile(TableInfo tableInfo) {
                 String xmlFileName = tableInfo.getEntityName() + "Mapper" + StringPool.DOT_XML;
+                StringBuffer sb = new StringBuffer();
+                sb.append(gc.getOutputDir()).append("/").append(mainPackageDir).append("/");
+                if (StringUtils.isNotBlank(pc.getModuleName())){
+                    sb.append(pc.getModuleName()).append("/");
+                }
+                sb.append(StringUtils.replace(xmlPackageName, ".", "/")).append("/");
+                sb.append(xmlFileName);
                 /*自定义xml文件名称*/
-                return gc.getOutputDir() + "/" + mainPackageDir + "/" + pc.getModuleName() + "/"
-                        + StringUtils.replace(xmlPackageName, ".", "/")
-                        +"/" + xmlFileName;
+                return sb.toString();
             }
         });
         injectionConfig.setFileOutConfigList(focList);
