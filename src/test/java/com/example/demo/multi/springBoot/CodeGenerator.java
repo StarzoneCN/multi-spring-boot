@@ -34,7 +34,9 @@ public class CodeGenerator {
         /* 打开二级缓存，因为自动生成的代码操作的基本都是单表，对于单表，使用二级缓存是比较明智的选择 */
         gc.setEnableCache(true);
         gc.setFileOverride(true);
-        gc.setServiceName("%Service");
+        /* 定义service文件名，“%s”表示entityName，也就是实体名，“%S（大写）”表示大写的实体名，如：UserInfo→USERINFO */
+        /* entity、 mapper、xml、serviceImpl、controller都可采用类似的方法自定义名称*/
+        gc.setServiceName("%sService");
         autoGenerator.setGlobalConfig(gc);
 
         /*数据源配置*/
@@ -93,7 +95,7 @@ public class CodeGenerator {
         // strategy.setSuperControllerClass("com.baomidou.ant.common.BaseController");
         /* 包含的表名，也可以使用exclude（排除表名），但是include/exclude只能二选一 */
         /*支持正则*/
-        strategy.setInclude("user");
+        strategy.setInclude("user_info");
         /* 实体公共字段 */
         // strategy.setSuperEntityColumns("id");
         // strategy.setControllerMappingHyphenStyle(true);
