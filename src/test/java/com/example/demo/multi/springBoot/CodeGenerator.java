@@ -21,7 +21,7 @@ import java.util.List;
  * @modefied:
  */
 public class CodeGenerator {
-    private static final String moduleName = "";
+    private static final String moduleName = "sys";
     private static final String[] include_tables = {"^sys_.*"};
     private static final String logicDeleteField = "del_flag";
     private static final String author = "LiHongxing";
