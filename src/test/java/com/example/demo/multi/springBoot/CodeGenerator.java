@@ -20,6 +20,8 @@ import java.util.List;
  * @modefied:
  */
 public class CodeGenerator {
+    private static final String mainPackagePath = "com.example.demo.multi.springBoot.mybatisPlus";
+    private static final String mainPackageDir = "com/example/demo/multi/springBoot/mybatisPlus";
 
     public static void main(String[] args) {
         // 代码生成器
@@ -28,7 +30,7 @@ public class CodeGenerator {
         /*全局配置*/
         GlobalConfig gc = new GlobalConfig();
         String projectPath = System.getProperty("user.dir");
-        gc.setOutputDir(projectPath + "/src/test/java");
+        gc.setOutputDir(projectPath + "/src/main/java");
         gc.setAuthor("LiHongxing");
         gc.setOpen(false);
         /* 打开二级缓存，因为自动生成的代码操作的基本都是单表，对于单表，使用二级缓存是比较明智的选择 */
@@ -51,7 +53,7 @@ public class CodeGenerator {
         /*包配置*/
         PackageConfig pc = new PackageConfig();
         // pc.setModuleName("模块名");
-        pc.setParent("com.example.demo.multi.springBoot");
+        pc.setParent(mainPackagePath);
         /*设置每个模块的包名*/
         pc.setEntity("entity");
         pc.setService("service");
@@ -73,8 +75,8 @@ public class CodeGenerator {
             @Override
             public String outputFile(TableInfo tableInfo) {
                 /*自定义xml文件名称*/
-                return projectPath + "/src/main/resources/mapper/" + tableInfo.getEntityName()
-                        + "/" + tableInfo.getEntityName() + "Mapper" + StringPool.DOT_XML;
+                return projectPath + "/src/main/java/" + mainPackageDir + "/mapper/xml/"
+                        + tableInfo.getEntityName() + "Mapper" + StringPool.DOT_XML;
             }
         });
         injectionConfig.setFileOutConfigList(focList);
@@ -95,7 +97,7 @@ public class CodeGenerator {
         // strategy.setSuperControllerClass("com.baomidou.ant.common.BaseController");
         /* 包含的表名，也可以使用exclude（排除表名），但是include/exclude只能二选一 */
         /*支持正则*/
-        strategy.setInclude("user_info");
+        strategy.setInclude("user");
         /* 实体公共字段 */
         // strategy.setSuperEntityColumns("id");
         // strategy.setControllerMappingHyphenStyle(true);
