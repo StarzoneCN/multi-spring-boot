@@ -21,6 +21,9 @@ import java.util.List;
  * @modefied:
  */
 public class CodeGenerator {
+    private static final String moduleName = "";
+    private static final String[] include_tables = {"^sys_.*"};
+    private static final String logicDeleteField = "del_flag";
     private static final String author = "LiHongxing";
     private static final String sourcesDir = "/src/main/java";
     private static final String serviceName = "%sService";
@@ -39,9 +42,6 @@ public class CodeGenerator {
 
     private static final String mainPackagePath = "com.example.demo.multi.springBoot.mybatisPlus";
     private static final String mainPackageDir = "com/example/demo/multi/springBoot/mybatisPlus";
-
-    private static final String[] include_tables = {"^sys_.*"};
-    private static final String logicDeleteField = "del_flag";
 
     public static void main(String[] args) {
         // 代码生成器
@@ -72,7 +72,9 @@ public class CodeGenerator {
 
         /*包配置*/
         PackageConfig pc = new PackageConfig();
-        pc.setModuleName("sys");
+        if (StringUtils.isNotBlank(moduleName)) {
+            pc.setModuleName(moduleName);
+        }
         pc.setParent(mainPackagePath);
         /*设置每个模块的包名*/
         if (StringUtils.isNotBlank(entityPackageName)) {
