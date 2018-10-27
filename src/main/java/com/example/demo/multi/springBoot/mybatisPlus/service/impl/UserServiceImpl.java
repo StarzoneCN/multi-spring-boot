@@ -54,7 +54,6 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
     @Override
     public IPage<User> getUsersPage(IPage<User> page){
         page = userMapper.selectPage(page, null);
-        page.setTotal(this.count(null));
         return page;
     }
 }
