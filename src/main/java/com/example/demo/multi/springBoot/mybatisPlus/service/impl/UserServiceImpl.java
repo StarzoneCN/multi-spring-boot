@@ -1,6 +1,7 @@
 package com.example.demo.multi.springBoot.mybatisPlus.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.example.demo.multi.springBoot.mybatisPlus.entity.User;
 import com.example.demo.multi.springBoot.mybatisPlus.mapper.UserMapper;
@@ -43,5 +44,17 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
         qw.orderByDesc("age");
         qw.orderByAsc("email");
         return userMapper.selectList(qw);
+    }
+
+    /**
+     * 这个分页插件（mybati-plus）是查询出所有的，然后再在内存中分页，性能不好
+     * @param page
+     * @return
+     */
+    @Override
+    public IPage<User> getUsersPage(IPage<User> page){
+        page = userMapper.selectPage(page, null);
+        page.setTotal(this.count(null));
+        return page;
     }
 }

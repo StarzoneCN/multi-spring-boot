@@ -2,8 +2,10 @@ package com.example.demo.multi.springBoot.config;
 
 import com.baomidou.mybatisplus.core.injector.ISqlInjector;
 import com.baomidou.mybatisplus.extension.injector.LogicSqlInjector;
+import org.mybatis.spring.annotation.MapperScan;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.transaction.annotation.EnableTransactionManagement;
 
 /**
  * mybatis-plus配置类
@@ -14,6 +16,8 @@ import org.springframework.context.annotation.Configuration;
  * @modefied:
  */
 @Configuration
+@EnableTransactionManagement
+@MapperScan("com.example.demo.multi.springBoot.mybatisPlus.mapper")
 public class MyBatisPlusConfiguration {
 
     @Bean

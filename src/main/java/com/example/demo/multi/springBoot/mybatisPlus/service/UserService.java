@@ -1,7 +1,8 @@
 package com.example.demo.multi.springBoot.mybatisPlus.service;
 
-import com.example.demo.multi.springBoot.mybatisPlus.entity.User;
+import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.service.IService;
+import com.example.demo.multi.springBoot.mybatisPlus.entity.User;
 
 import java.util.Collection;
 import java.util.List;
@@ -22,4 +23,6 @@ public interface UserService extends IService<User> {
     int removeBatchIds(Collection ids);
 
     List sortByNameAndAge();
+
+    IPage<User> getUsersPage(IPage<User> page);
 }

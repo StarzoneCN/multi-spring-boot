@@ -1,6 +1,8 @@
 package com.example.demo.multi.springBoot.controller;
 
 
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.example.demo.multi.springBoot.mybatisPlus.entity.User;
 import com.example.demo.multi.springBoot.mybatisPlus.service.UserService;
 import com.example.demo.multi.springBoot.mybatisPlus.vo.CommonResponse;
@@ -77,5 +79,14 @@ public class UserController {
             c.setMessage(MSG_FAIL_TO_QUERY);
             return c;
         }
+    }
+
+    @GetMapping("page")
+    public IPage getPage(Integer pageIndex, Integer pageSize){
+        Page<User> page = new Page();
+        page.setCurrent(pageIndex);
+        page.setSize(pageSize);
+        page.setOptimizeCountSql(true);
+        return userService.getUsersPage(page);
     }
 }
