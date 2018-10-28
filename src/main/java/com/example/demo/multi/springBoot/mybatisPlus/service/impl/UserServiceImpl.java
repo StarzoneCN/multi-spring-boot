@@ -56,4 +56,14 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
         page = userMapper.selectPage(page, null);
         return page;
     }
+
+    /**
+     * 根据id查询用户，不管是否已经被逻辑删除
+     * @param id 用户id
+     * @return 用户对象
+     */
+    @Override
+    public User getByIdWhetherDeleteOrNot(Integer id){
+        return userMapper.selectByIdCustomized(id);
+    }
 }

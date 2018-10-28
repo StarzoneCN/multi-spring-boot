@@ -3,6 +3,11 @@
 <mapper namespace="com.example.demo.multi.springBoot.mybatisPlus.mapper.UserMapper">
 
     <!-- 开启二级缓存 -->
-    <cache type="org.mybatis.caches.ehcache.LoggingEhcache"/>
+    <cache/>
 
+    <select id="selectByIdCustomized" resultType="com.example.demo.multi.springBoot.mybatisPlus.entity.User">
+        SELECT id, `name`, age, email, del_flag
+        FROM `user`
+        WHERE id = #{id}
+    </select>
 </mapper>

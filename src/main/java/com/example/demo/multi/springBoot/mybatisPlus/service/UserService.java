@@ -25,4 +25,6 @@ public interface UserService extends IService<User> {
     List sortByNameAndAge();
 
     IPage<User> getUsersPage(IPage<User> page);
+
+    User getByIdWhetherDeleteOrNot(Integer id);
 }

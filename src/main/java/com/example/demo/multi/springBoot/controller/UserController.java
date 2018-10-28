@@ -89,4 +89,19 @@ public class UserController {
         page.setOptimizeCountSql(true);
         return userService.getUsersPage(page);
     }
+
+
+    @GetMapping("refresh/{intParam}")
+    public CommonResponse testXmlRefresh(@PathVariable Integer intParam){
+        CommonResponse commonResponse = new CommonResponse();
+        User user = userService.getByIdWhetherDeleteOrNot(intParam);
+        if (null != user){
+            commonResponse.setSuccess(true);
+            commonResponse.setData(user);
+            return commonResponse;
+        }
+        commonResponse.setSuccess(false);
+        commonResponse.setMessage(MSG_USER_NOT_EXISTS);
+        return commonResponse;
+    }
 }

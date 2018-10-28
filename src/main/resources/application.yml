@@ -9,6 +9,7 @@ mybatis-plus:
     db-config:
       logic-delete-value: true
       logic-not-delete-value: false
+  mapper-locations: classpath*:mybatis/mapper/*Mapper.xml
 logging:
   level:
-    root: debug
+    root: warning
