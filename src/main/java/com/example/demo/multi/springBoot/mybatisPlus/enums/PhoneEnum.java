@@ -1,6 +1,6 @@
 package com.example.demo.multi.springBoot.mybatisPlus.enums;
 
-import com.baomidou.mybatisplus.core.enums.IEnum;
+import com.baomidou.mybatisplus.annotation.EnumValue;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonValue;
 
@@ -12,12 +12,13 @@ import com.fasterxml.jackson.annotation.JsonValue;
  * @modefied:
  */
 @JsonFormat(shape = JsonFormat.Shape.OBJECT)
-public enum PhoneEnum implements IEnum {
+public enum PhoneEnum {
 
     CMCC("10086", "中国移动"),
     CUCC("10010", "中国联通"),
     CT("10000", "中国电信");
 
+    @EnumValue
     private String value;
     private String desc;
 
@@ -26,7 +27,6 @@ public enum PhoneEnum implements IEnum {
         this.desc = desc;
     }
 
-    @Override
     public String getValue() {
         return this.value;
     }
