@@ -26,6 +26,7 @@ public class CodeGenerator {
     private static final String logicDeleteField = "del_flag";
     private static final String author = "LiHongxing";
     private static final String sourcesDir = "/src/main/java";
+    private static final String classpath = "/src/main/resources";
     private static final String serviceName = "%sService";
 
     private static final String databaseUrl = "jdbc:mysql://localhost:3306/4mybatis_plus?seUnicode=true&characterEncoding=UTF-8&serverTimezone=UTC";
@@ -37,7 +38,7 @@ public class CodeGenerator {
     private static final String servicePackageName = "service";
     private static final String serviceImplPackageName = "service.impl";
     private static final String mapperPackageName = "mapper";
-    private static final String xmlPackageName = "mapper.xml";
+    private static final String xmlPackageName = "mapper";
     private static final String controllerPackageName = "controller";
 
     private static final String mainPackagePath = "com.example.demo.multi.springBoot.mybatisPlus";
@@ -110,7 +111,7 @@ public class CodeGenerator {
             public String outputFile(TableInfo tableInfo) {
                 String xmlFileName = tableInfo.getEntityName() + "Mapper" + StringPool.DOT_XML;
                 StringBuffer sb = new StringBuffer();
-                sb.append(gc.getOutputDir()).append("/").append(mainPackageDir).append("/");
+                sb.append(projectPath).append(classpath).append("/");
                 if (StringUtils.isNotBlank(pc.getModuleName())){
                     sb.append(pc.getModuleName()).append("/");
                 }
