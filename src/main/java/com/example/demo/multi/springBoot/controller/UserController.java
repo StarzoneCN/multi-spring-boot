@@ -1,6 +1,7 @@
 package com.example.demo.multi.springBoot.controller;
 
 
+import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.example.demo.multi.springBoot.mybatisPlus.entity.User;
@@ -109,6 +110,13 @@ public class UserController {
     public CommonResponse newUser(User user){
         CommonResponse commonResponse = new CommonResponse();
         commonResponse.setSuccess(userService.save(user));
+        return commonResponse;
+    }
+
+    @PostMapping("update")
+    public CommonResponse updateById(User user){
+        CommonResponse commonResponse = new CommonResponse();
+        commonResponse.setSuccess(userService.update(user, new UpdateWrapper<>(new User().setId(user.getId()))));
         return commonResponse;
     }
 }
