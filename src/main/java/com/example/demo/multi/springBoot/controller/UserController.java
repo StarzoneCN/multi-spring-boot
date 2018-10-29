@@ -104,4 +104,11 @@ public class UserController {
         commonResponse.setMessage(MSG_USER_NOT_EXISTS);
         return commonResponse;
     }
+
+    @PostMapping("new")
+    public CommonResponse newUser(User user){
+        CommonResponse commonResponse = new CommonResponse();
+        commonResponse.setSuccess(userService.save(user));
+        return commonResponse;
+    }
 }

@@ -10,6 +10,7 @@ mybatis-plus:
       logic-delete-value: true
       logic-not-delete-value: false
   mapper-locations: classpath*:mybatis/mapper/*Mapper.xml
+  type-enums-package: com.example.demo.multi.springBoot.mybatisPlus.enums
 logging:
   level:
     root: warning
