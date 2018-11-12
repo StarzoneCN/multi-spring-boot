@@ -2,6 +2,12 @@ package com.example.demo.multi.springBoot;
 
 import org.junit.Test;
 
+import java.time.Instant;
+import java.time.LocalDate;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
+import java.util.Date;
+
 /**
  * @author: LiHongxing
  * @email: lihongxing@bluemoon.com.cn
@@ -12,6 +18,7 @@ public class EasyTester {
 
     @Test
     public void test(){
-
+        Instant instant = LocalDate.now().atStartOfDay(ZoneId.systemDefault()).toInstant();
+        System.out.println(Date.from(instant) instanceof Date);
     }
 }
