@@ -1,13 +1,13 @@
 package com.example.demo.multi.springBoot.mybatisPlus.entity;
 
-import com.baomidou.mybatisplus.annotation.*;
-import com.example.demo.multi.springBoot.mybatisPlus.enums.PhoneEnum;
+import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.annotation.TableId;
+import java.time.LocalDateTime;
+import com.baomidou.mybatisplus.annotation.TableLogic;
+import java.io.Serializable;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.experimental.Accessors;
-
-import java.io.Serializable;
-import java.util.Date;
 
 /**
  * <p>
@@ -15,7 +15,7 @@ import java.util.Date;
  * </p>
  *
  * @author LiHongxing
- * @since 2018-10-26
+ * @since 2018-11-21
  */
 @Data
 @EqualsAndHashCode(callSuper = false)
@@ -27,7 +27,9 @@ public class User implements Serializable {
     @TableId(value = "id", type = IdType.AUTO)
     private Integer id;
 
-    private String name;
+    private String username;
+
+    private String password;
 
     private Integer age;
 
