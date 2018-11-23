@@ -21,15 +21,15 @@ import java.util.List;
  * @modefied:
  */
 public class CodeGenerator {
-    private static final String moduleName = "sys";
-    private static final String[] include_tables = {"^sys_.*"};
+    private static final String moduleName = "";
+    private static final String[] include_tables = {"user"};
     private static final String logicDeleteField = "del_flag";
     private static final String author = "LiHongxing";
     private static final String sourcesDir = "/src/main/java";
     private static final String classpath = "/src/main/resources";
     private static final String serviceName = "%sService";
 
-    private static final String databaseUrl = "jdbc:mysql://localhost:3306/4mybatis_plus?seUnicode=true&characterEncoding=UTF-8&serverTimezone=UTC";
+    private static final String databaseUrl = "jdbc:mysql://localhost:3306/oauth2_springboot?seUnicode=true&characterEncoding=UTF-8&serverTimezone=UTC";
     private static final String driverClassName = "com.mysql.cj.jdbc.Driver";
     private static final String databaseUsername = "root";
     private static final String databasePassword = "3";

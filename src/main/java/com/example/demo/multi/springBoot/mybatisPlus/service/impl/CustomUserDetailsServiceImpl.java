@@ -1,5 +1,6 @@
 package com.example.demo.multi.springBoot.mybatisPlus.service.impl;
 
+import com.example.demo.multi.springBoot.mybatisPlus.entity.User;
 import com.example.demo.multi.springBoot.mybatisPlus.service.CustomUserDetailsService;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -18,6 +19,10 @@ public class CustomUserDetailsServiceImpl implements CustomUserDetailsService {
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        return null; // todo
+        /*模拟数据库操作*/
+        User user = new User();
+        user.setUsername("10086");
+        user.setPassword("123456");
+        return user; // todo
     }
 }
