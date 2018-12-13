@@ -43,6 +43,10 @@ public class SsqContoller {
     @Autowired
     private IProbabilityRankService iProbabilityRankService;
 
+    /**
+     * 初始化数据，获取第1期到最新一期所有的开奖结果
+     * @return
+     */
     @RequestMapping("init")
     public String initData() {
         String htmlStr = HttpUtil.get("http://kaijiang.500.com/shtml/ssq/18042.shtml", Charset.forName("UTF-8"));
@@ -60,6 +64,10 @@ public class SsqContoller {
         return "success";
     }
 
+    /**
+     * 将所有期的号码拼接成r0-r1-r2-r3-r4-r5+b0形式，并保存到数据库
+     * @return
+     */
     @RequestMapping("fs")
     public String fillStr(){
         List<Ssq> list = iSsqService.selectList(null);
@@ -70,12 +78,20 @@ public class SsqContoller {
         return "success";
     }
 
+    /**
+     * 直接返回号码的排序 如： 1:20 表示：号码1排序是20
+     * @return
+     */
     @RequestMapping("nd")
     public CodeSortedVo neatenData(){
         List<Ssq> list = iSsqService.selectList(null);
         return sortCode(list);
     }
 
+    /**
+     * 更新最新20条数据
+     * @return
+     */
     @RequestMapping("update")
     public String updateData() {
         String responseStr = HttpUtil.get("http://f.apiplus.net/ssq-20.json", Charset.forName("UTF-8"));
@@ -112,7 +128,7 @@ public class SsqContoller {
     }
 
     /**
-     * 排序处理
+     * 排序处理，初始化ProbabilityRank表
      * @param rowFrom 开始插入位置：ssq_id
      * @return
      */
@@ -155,7 +171,7 @@ public class SsqContoller {
     }
 
     /**
-     * 统计概率分布
+     * 统计概率分布，例：1:20 表示号码1排序20
      * @param ssqId
      * @return
      */
@@ -165,6 +181,11 @@ public class SsqContoller {
         return JSONUtil.toJsonStr(map);
     }
 
+    /**
+     * 排序后的号码，例：330:20,  表示：号码20总出现次数为330
+     * @param ssqId
+     * @return
+     */
     @RequestMapping("rcocs")
     public String reverseComputedOpenCodeSort(String ssqId) {
         Map<String, Map<String, Integer>> map = getComputedOpenCodeSort(ssqId);
@@ -354,7 +375,7 @@ public class SsqContoller {
     }
 
     /**
-     * 某概率排序值出现的概率
+     * 某概率排序值出现的概率（百分比）
      * @return
      */
     @GetMapping("rta")
