@@ -8,6 +8,7 @@ import lombok.EqualsAndHashCode;
 import lombok.experimental.Accessors;
 
 import java.io.Serializable;
+import java.time.LocalDateTime;
 import java.util.Date;
 
 /**
@@ -40,9 +41,9 @@ public class User extends Model<User> implements Serializable {
     private PhoneEnum mobile;
 
     @TableField(fill = FieldFill.INSERT)
-    private Date createTime;
+    private LocalDateTime createTime;
     @TableField(fill = FieldFill.UPDATE)
-    private Date operateTime;
+    private LocalDateTime operateTime;
 
     @Override
     protected Serializable pkVal() {

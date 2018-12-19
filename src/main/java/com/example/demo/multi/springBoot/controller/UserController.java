@@ -131,9 +131,9 @@ public class UserController {
     }
 
 
-    @RequestMapping("test/list/objs")
-    public List<User> testListObjs(){
-        QueryWrapper<User> condition = new QueryWrapper(new User().setId(1), new String[]{"id", "name", "age"});
+    @RequestMapping("test/list/objs/{id}")
+    public List<User> testListObjs(Integer id){
+        QueryWrapper<User> condition = new QueryWrapper(new User().setId(id), new String[]{"id", "name", "age", "create_time"});
         condition.excludeColumns("mobile", "age");
         return userService.list(condition);
     }
