@@ -3,9 +3,11 @@ package com.example.demo.multi.springBoot.mybatisPlus.service.impl;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.example.demo.multi.springBoot.mybatisPlus.entity.PartOfUser;
 import com.example.demo.multi.springBoot.mybatisPlus.entity.User;
 import com.example.demo.multi.springBoot.mybatisPlus.mapper.UserMapper;
 import com.example.demo.multi.springBoot.mybatisPlus.service.UserService;
+import com.sun.org.apache.regexp.internal.REUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -65,5 +67,15 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
     @Override
     public User getByIdWhetherDeleteOrNot(Integer id){
         return userMapper.selectByIdCustomized(id);
+    }
+
+    @Override
+    public PartOfUser selectPartOfUser(Integer id){
+        return userMapper.selectPartOfUser(id);
+    }
+
+    @Override
+    public Map<String, Object> selectUserMapById(Integer id){
+        return userMapper.selectUserMapById(id);
     }
 }

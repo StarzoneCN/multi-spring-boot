@@ -5,8 +5,19 @@
     <!-- 开启二级缓存 -->
     <cache/>
 
-    <select id="selectByIdCustomized" resultType="com.example.demo.multi.springBoot.mybatisPlus.entity.User">
+    <select id="selectByIdCustomized" resultType="User">
         SELECT id, `name`, age, email, del_flag
+        FROM `user`
+        WHERE id = #{id}
+    </select>
+
+    <select id="selectPartOfUser" resultType="com.example.demo.multi.springBoot.mybatisPlus.entity.PartOfUser">
+        SELECT id, `name`, age
+        FROM `user`
+        WHERE id = #{id}
+    </select>
+    <select id="selectUserMapById" resultType="java.util.Map">
+        SELECT *
         FROM `user`
         WHERE id = #{id}
     </select>

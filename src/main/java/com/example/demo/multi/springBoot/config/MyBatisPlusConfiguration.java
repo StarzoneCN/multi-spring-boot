@@ -47,7 +47,7 @@ public class MyBatisPlusConfiguration {
     private String mapperLocations = "mybatis/mapper/*Mapper.xml";
     private boolean enabled = true;
 
-    @Bean
+    // @Bean
     public MybatisMapperRefresh mybatisMapperRefresh(){
         /** MybatisMapperRefresh构造参数说明：
          * sqlSessionFactory:session工厂

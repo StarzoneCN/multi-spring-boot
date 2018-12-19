@@ -1,6 +1,7 @@
 package com.example.demo.multi.springBoot.mybatisPlus.entity;
 
 import com.baomidou.mybatisplus.annotation.*;
+import com.baomidou.mybatisplus.extension.activerecord.Model;
 import com.example.demo.multi.springBoot.mybatisPlus.enums.PhoneEnum;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -20,7 +21,7 @@ import java.util.Date;
 @Data
 @EqualsAndHashCode(callSuper = false)
 @Accessors(chain = true)
-public class User implements Serializable {
+public class User extends Model<User> implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
@@ -42,4 +43,9 @@ public class User implements Serializable {
     private Date createTime;
     @TableField(fill = FieldFill.UPDATE)
     private Date operateTime;
+
+    @Override
+    protected Serializable pkVal() {
+        return this.id;
+    }
 }

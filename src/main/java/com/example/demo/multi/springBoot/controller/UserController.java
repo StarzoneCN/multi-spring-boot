@@ -1,12 +1,16 @@
 package com.example.demo.multi.springBoot.controller;
 
 
+import com.baomidou.mybatisplus.core.conditions.Wrapper;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.example.demo.multi.springBoot.mybatisPlus.entity.PartOfUser;
 import com.example.demo.multi.springBoot.mybatisPlus.entity.User;
 import com.example.demo.multi.springBoot.mybatisPlus.service.UserService;
 import com.example.demo.multi.springBoot.mybatisPlus.vo.CommonResponse;
+import com.example.demo.multi.springBoot.mybatisPlus.vo.UserResultVo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -106,17 +110,43 @@ public class UserController {
         return commonResponse;
     }
 
+    @RequestMapping("selectPartOfUser")
+    public PartOfUser selectPartOfUser(Integer id){
+        return userService.selectPartOfUser(id);
+    }
+
     @PostMapping("new")
     public CommonResponse newUser(User user){
         CommonResponse commonResponse = new CommonResponse();
         commonResponse.setSuccess(userService.save(user));
+        commonResponse.setData(user.getId());
         return commonResponse;
     }
 
     @PostMapping("update")
     public CommonResponse updateById(User user){
         CommonResponse commonResponse = new CommonResponse();
-        commonResponse.setSuccess(userService.update(user, new UpdateWrapper<>(new User().setId(user.getId()))));
+        commonResponse.setSuccess(userService.update(user, new UpdateWrapper<>(user)));
         return commonResponse;
+    }
+
+
+    @RequestMapping("test/list/objs")
+    public List<User> testListObjs(){
+        QueryWrapper<User> condition = new QueryWrapper(new User().setId(1), new String[]{"id", "name", "age"});
+        condition.excludeColumns("mobile", "age");
+        return userService.list(condition);
+    }
+
+    @RequestMapping("getByModelId")
+    public User getByModelId(Integer id){
+        User user = new User();
+        user.setId(id);
+        return user.selectById();
+    }
+
+    @RequestMapping("query/map/{id}")
+    public Map<String, Object> selectUserMapById(@PathVariable Integer id){
+        return userService.selectUserMapById(id);
     }
 }

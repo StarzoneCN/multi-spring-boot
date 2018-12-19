@@ -9,8 +9,13 @@ mybatis-plus:
     db-config:
       logic-delete-value: true
       logic-not-delete-value: false
+    refresh: true
   mapper-locations: classpath*:mybatis/mapper/*Mapper.xml
   type-enums-package: com.example.demo.multi.springBoot.mybatisPlus.enums
+  type-aliases-package: com.example.demo.multi.springBoot.mybatisPlus.entity
+  type-aliases-super-type: com.baomidou.mybatisplus.extension.activerecord.Model
+  configuration:
+    call-setters-on-nulls: true
 logging:
   level:
     root: warning

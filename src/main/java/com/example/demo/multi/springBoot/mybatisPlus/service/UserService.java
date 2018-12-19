@@ -2,6 +2,7 @@ package com.example.demo.multi.springBoot.mybatisPlus.service;
 
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.service.IService;
+import com.example.demo.multi.springBoot.mybatisPlus.entity.PartOfUser;
 import com.example.demo.multi.springBoot.mybatisPlus.entity.User;
 
 import java.util.Collection;
@@ -27,4 +28,8 @@ public interface UserService extends IService<User> {
     IPage<User> getUsersPage(IPage<User> page);
 
     User getByIdWhetherDeleteOrNot(Integer id);
+
+    PartOfUser selectPartOfUser(Integer id);
+
+    Map<String, Object> selectUserMapById(Integer id);
 }
