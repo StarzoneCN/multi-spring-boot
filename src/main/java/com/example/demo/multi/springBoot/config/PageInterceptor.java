@@ -179,7 +179,7 @@ public class PageInterceptor implements Interceptor {
                     boundSql.getParameterMappings(), boundSql.getParameterObject());
             setParameters(countStmt, mappedStatement, countBS, boundSql.getParameterObject());
             rs = countStmt.executeQuery();
-            int totalCount = 0;
+            long totalCount = 0;
             if (rs.next()) {
                 totalCount = rs.getInt(1);
             }
