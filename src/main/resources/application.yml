@@ -1,0 +1,15 @@
+spring:
+  profiles:
+    active: c
+
+---
+spring:
+  profiles: b
+server:
+  port: 81
+
+---
+spring:
+  profiles: c
+server:
+  port: 80
