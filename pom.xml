@@ -59,6 +59,21 @@
 					<skipTests>true</skipTests>
 				</configuration>
 			</plugin>
+			<plugin>
+				<groupId>com.example</groupId>
+				<artifactId>demo-multi-spring-boot</artifactId>
+				<version>0.0.1-SNAPSHOT</version>
+				<executions>
+					<execution>
+						<goals>
+							<goal>printPc</goal>
+						</goals>
+					</execution>
+				</executions>
+				<configuration>
+					<printTip>true</printTip>
+				</configuration>
+			</plugin>
 		</plugins>
 	</build>
 	<profiles>
