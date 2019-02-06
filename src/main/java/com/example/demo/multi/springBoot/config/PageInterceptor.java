@@ -183,7 +183,7 @@ public class PageInterceptor implements Interceptor {
             if (rs.next()) {
                 totalCount = rs.getInt(1);
             }
-            page.setTotal(totalCount);
+            page.setTotal((int)totalCount);
             long totalPage = totalCount / page.getSize() + ((totalCount % page.getSize() == 0) ? 0 : 1);
             page.setTotal(totalPage);
         } catch (SQLException e) {
