@@ -15,6 +15,7 @@ import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.nio.charset.Charset;
 import java.util.ArrayList;
@@ -44,6 +45,7 @@ public class SsqServiceImpl extends ServiceImpl<SsqMapper, Ssq> implements ISsqS
      * 更新最新20条数据
      * @return
      */
+    @Transactional
     @Override
     public void updateData() {
         String responseStr = HttpUtil.get("http://f.apiplus.net/ssq-20.json", Charset.forName("UTF-8"));

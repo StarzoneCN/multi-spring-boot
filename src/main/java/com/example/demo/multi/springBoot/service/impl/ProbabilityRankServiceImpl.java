@@ -12,6 +12,7 @@ import com.example.demo.multi.springBoot.service.IProbabilityRankService;
 import com.example.demo.multi.springBoot.service.ISsqService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.sql.Wrapper;
 import java.util.*;
@@ -143,6 +144,7 @@ public class ProbabilityRankServiceImpl extends ServiceImpl<ProbabilityRankMappe
     /**
      * 更新probability_rank表
      */
+    @Transactional
     @Override
     public void updatePr() {
         String maxSsqId = queryMaxSsqId();
