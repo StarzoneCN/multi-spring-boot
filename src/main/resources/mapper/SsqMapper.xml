@@ -15,4 +15,7 @@
 		<result column="str" property="str" />
 	</resultMap>
 
+	<select id="queryMaxId" resultType="java.lang.String">
+		SELECT MAX(id) FROM `ssq`
+	</select>
 </mapper>

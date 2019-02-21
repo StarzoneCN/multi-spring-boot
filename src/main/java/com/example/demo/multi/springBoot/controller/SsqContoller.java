@@ -45,31 +45,22 @@ public class SsqContoller {
 
     /**
      * 初始化数据，获取第1期到最新一期所有的开奖结果
+     *
      * @return
      */
     @RequestMapping("init")
     public String initData() {
-        String htmlStr = HttpUtil.get("http://kaijiang.500.com/shtml/ssq/18042.shtml", Charset.forName("UTF-8"));
-        Document doc = Jsoup.parse(htmlStr);
-        Elements elements = doc.getElementsByClass("iSelectList");
-
-        for (Element element : elements) {
-            Elements aChildren = element.children();
-            for (Element child : aChildren) {
-                String href = child.attr("href");
-                parseAndSaveData(href);
-            }
-        }
-
+        iSsqService.initSsqData();
         return "success";
     }
 
     /**
      * 将所有期的号码拼接成r0-r1-r2-r3-r4-r5+b0形式，并保存到数据库
+     *
      * @return
      */
     @RequestMapping("fs")
-    public String fillStr(){
+    public String fillStr() {
         List<Ssq> list = iSsqService.selectList(null);
         for (Ssq ssq : list) {
             ssq.setStr(StringUtils.assemblySsq2Str(ssq));
@@ -79,62 +70,89 @@ public class SsqContoller {
     }
 
     /**
-     * 直接返回号码的排序 如： 1:20 表示：号码1排序是20
+     * 直接返回号码的排序 如： 1:20/7/11 表示：#20/#7/#11球出现了1次
+     *
      * @return
      */
     @RequestMapping("nd")
-    public CodeSortedVo neatenData(){
+    public Map<String, TreeMap<Integer, String>> neatenData() {
         List<Ssq> list = iSsqService.selectList(null);
-        return sortCode(list);
+        CodeSortedVo vo = sortCode(list);
+        Map<String, TreeMap<Integer, String>> result = new HashMap<String, TreeMap<Integer, String>>() {{
+            this.put("red", new TreeMap());
+            this.put("blue", new TreeMap());
+        }};
+        vo.getRedSortedList().stream().forEach(entry -> {
+            Map<Integer, String> redMap = result.get("red");
+            if (redMap.get(entry.getValue()) == null)
+                redMap.put(entry.getValue(), entry.getKey().toString());
+            else
+                redMap.put(entry.getValue(), redMap.get(entry.getValue()) + "/" + entry.getKey());
+
+            Map<Integer, String> blueMap = result.get("blue");
+            if (blueMap.get(entry.getValue()) == null)
+                blueMap.put(entry.getValue(), entry.getKey().toString());
+            else
+                blueMap.put(entry.getValue(), blueMap.get(entry.getValue()) + "/" + entry.getKey());
+        });
+        return result;
+    }
+
+    /**
+     * @return 每个号码的开出次数，如1:343-表示#1球开出343次；
+     */
+    @RequestMapping("count")
+    public Map<String, Map<Integer, Integer>> count() {
+        List<Ssq> list = iSsqService.selectList(null);
+        HashMap<String, Map<Integer, Integer>> result = list.stream().reduce(new HashMap<String, Map<Integer, Integer>>() {{
+            this.put("red", new HashMap<>());
+            this.put("blue", new HashMap<>());
+        }}, (m, ssq) -> {
+            Map<Integer, Integer> redMap = m.get("red");
+            Map<Integer, Integer> blueMap = m.get("blue");
+            redMap.put(ssq.getR0(), redMap.get(ssq.getR0()) == null ? 1 : redMap.get(ssq.getR0()) + 1);
+            redMap.put(ssq.getR1(), redMap.get(ssq.getR1()) == null ? 1 : redMap.get(ssq.getR1()) + 1);
+            redMap.put(ssq.getR2(), redMap.get(ssq.getR2()) == null ? 1 : redMap.get(ssq.getR2()) + 1);
+            redMap.put(ssq.getR3(), redMap.get(ssq.getR3()) == null ? 1 : redMap.get(ssq.getR3()) + 1);
+            redMap.put(ssq.getR4(), redMap.get(ssq.getR4()) == null ? 1 : redMap.get(ssq.getR4()) + 1);
+            redMap.put(ssq.getR5(), redMap.get(ssq.getR5()) == null ? 1 : redMap.get(ssq.getR5()) + 1);
+
+            blueMap.put(ssq.getB0(), blueMap.get(ssq.getB0()) == null ? 1 : blueMap.get(ssq.getB0()) + 1);
+            return m;
+        }, (m1, m2) -> {
+            m1.get("red").entrySet().stream().forEach((entry) -> {
+                Map<Integer, Integer> red2 = m2.get("red");
+                red2.put(entry.getKey(), red2.get(entry.getKey()) + entry.getValue());
+            });
+            m1.get("blue").entrySet().stream().forEach((entry) -> {
+                Map<Integer, Integer> red2 = m2.get("blue");
+                red2.put(entry.getKey(), red2.get(entry.getKey()) + entry.getValue());
+            });
+            return m2;
+        });
+        return result;
     }
 
     /**
      * 更新最新20条数据
+     *
      * @return
      */
     @RequestMapping("update")
     public String updateData() {
-        String responseStr = HttpUtil.get("http://f.apiplus.net/ssq-20.json", Charset.forName("UTF-8"));
-        JSONObject jsonObject = JSONUtil.parseObj(responseStr);
-        JSONArray jsonArray = jsonObject.getJSONArray("data");
-        List<Ssq> listToUpdate = new ArrayList<>(32);
-        for (Object obj : jsonArray) {
-            JSONObject jsonObj = (JSONObject)obj;
-            String expectStr = jsonObj.getStr("expect");
-            if (StringUtils.isBlank(expectStr)) {
-                continue;
-            }
-            Ssq ssq = new Ssq();
-            ssq.setId(expectStr.substring(2));
-
-            String opencode = jsonObj.getStr("opencode");
-            String[] opencodes = StringUtils.splitToArray(opencode, ',');
-
-            ssq.setR0(Integer.parseInt(opencodes[0]));
-            ssq.setR1(Integer.parseInt(opencodes[1]));
-            ssq.setR2(Integer.parseInt(opencodes[2]));
-            ssq.setR3(Integer.parseInt(opencodes[3]));
-            ssq.setR4(Integer.parseInt(opencodes[4]));
-
-            String lastRedAndBlue = opencodes[5];
-            ssq.setR5(Integer.parseInt(lastRedAndBlue.substring(0, 2)));
-            ssq.setB0(Integer.parseInt(lastRedAndBlue.substring(3)));
-
-            ssq.setStr(StringUtils.assemblySsq2Str(ssq));
-            listToUpdate.add(ssq);
-        }
-        iSsqService.insertOrUpdateBatch(listToUpdate);
+        iSsqService.updateData();
         return "success";
     }
 
     /**
      * 排序处理，初始化ProbabilityRank表
+     *
      * @param rowFrom 开始插入位置：ssq_id
      * @return
      */
     @RequestMapping("ipr/{from}")
     public String initProbabilityRank(@PathVariable("from") String rowFrom) {
-        rowFrom = StringUtils.isNotBlank(rowFrom)? rowFrom : "11118";
+        rowFrom = StringUtils.isNotBlank(rowFrom) ? rowFrom : "11118";
         List<Ssq> list = iSsqService.selectList(null);
         List<ProbabilityRank> pRanks = new ArrayList<>();
         CodeSortedVo vo;
@@ -149,13 +167,13 @@ public class SsqContoller {
             Map<Integer, Integer> rankingMapB = new TreeMap<>();
             Map<Integer, Integer> codeSortMapR = new TreeMap<>();
             Map<Integer, Integer> codeSortMapB = new TreeMap<>();
-            for (int j=1; j <= vo.getRedSortedList().size(); j++) {
+            for (int j = 1; j <= vo.getRedSortedList().size(); j++) {
                 if (j <= 16) {
-                    rankingMapB.put(j, vo.getBlueSortedList().get(j-1).getKey());
-                    codeSortMapB.put(vo.getBlueSortedList().get(j-1).getKey(), j);
+                    rankingMapB.put(j, vo.getBlueSortedList().get(j - 1).getKey());
+                    codeSortMapB.put(vo.getBlueSortedList().get(j - 1).getKey(), j);
                 }
-                rankingMapR.put(j, vo.getRedSortedList().get(j-1).getKey());
-                codeSortMapR.put(vo.getRedSortedList().get(j-1).getKey(), j);
+                rankingMapR.put(j, vo.getRedSortedList().get(j - 1).getKey());
+                codeSortMapR.put(vo.getRedSortedList().get(j - 1).getKey(), j);
             }
             pr = setRanking4Pr(pr, rankingMapR, rankingMapB);
 
@@ -172,6 +190,7 @@ public class SsqContoller {
 
     /**
      * 统计概率分布，例：1:20 表示号码1排序20
+     *
      * @param ssqId
      * @return
      */
@@ -183,21 +202,22 @@ public class SsqContoller {
 
     /**
      * 排序后的号码，例：330:20,  表示：号码20总出现次数为330
+     *
      * @param ssqId
      * @return
      */
     @RequestMapping("rcocs")
     public String reverseComputedOpenCodeSort(String ssqId) {
         Map<String, Map<String, Integer>> map = getComputedOpenCodeSort(ssqId);
-        Map<Integer,Integer> mapR = new HashMap<>();
-        Map<Integer,Integer> mapB = new HashMap<>();
+        Map<Integer, Integer> mapR = new HashMap<>();
+        Map<Integer, Integer> mapB = new HashMap<>();
         for (Map.Entry<String, Integer> e : map.get("red").entrySet()) {
             mapR.put(e.getValue(), Integer.parseInt(e.getKey()));
         }
         for (Map.Entry<String, Integer> entry : map.get("blue").entrySet()) {
             mapB.put(entry.getValue(), Integer.parseInt(entry.getKey()));
         }
-       Map<String, Map<Integer,Integer>> returnMap = new HashMap<>(2);
+        Map<String, Map<Integer, Integer>> returnMap = new HashMap<>(2);
         returnMap.put("red", mapR);
         returnMap.put("blue", mapB);
         return JSONUtil.toJsonStr(returnMap);
@@ -212,8 +232,8 @@ public class SsqContoller {
         List<ProbabilityRank> prs = iProbabilityRankService.selectList(ew);
         Map<String, Integer> mapR = new TreeMap<>();
         Map<String, Integer> mapB = new TreeMap<>();
-        for (int i=1; i<=33; i++) {
-            if (i<=16) {
+        for (int i = 1; i <= 33; i++) {
+            if (i <= 16) {
                 mapB.put(Integer.toString(i), 0);
             }
             mapR.put(Integer.toString(i), 0);
@@ -234,61 +254,6 @@ public class SsqContoller {
         return map;
     }
 
-    private void parseAndSaveData(String url){
-        Ssq ssq = new Ssq();
-        for (String s : StringUtils.splitToArray(url, '/')) {
-            int index = s.indexOf(".shtml");
-            if ( index > 0) {
-                String id = s.substring(0, index);
-                if (id.compareTo("17001") >= 0)
-                    return;
-                ssq.setId(id);
-            }
-        }
-
-
-        Elements elements = getElesByClass(url, "ball_box01");
-        for (int i = 0; i < 7; i++) {
-            Element ele = elements.get(i);
-            switch (i) {
-                case 0:
-                    ssq.setR0(Integer.parseInt(ele.text()));
-                    break;
-                case 1:
-                    ssq.setR1(Integer.parseInt(ele.text()));
-                    break;
-                case 2:
-                    ssq.setR2(Integer.parseInt(ele.text()));
-                    break;
-                case 3:
-                    ssq.setR3(Integer.parseInt(ele.text()));
-                    break;
-                case 4:
-                    ssq.setR4(Integer.parseInt(ele.text()));
-                    break;
-                case 5:
-                    ssq.setR5(Integer.parseInt(ele.text()));
-                    break;
-                case 6:
-                    ssq.setB0(Integer.parseInt(ele.text()));
-                    break;
-                default:
-                    break;
-            }
-        }
-        iSsqService.insertOrUpdate(ssq);
-    }
-
-    private Elements getElesByClass(String url, String tagName) {
-        String htmlStr = HttpUtil.get(url);
-        Document doc = Jsoup.parse(htmlStr);
-        Elements elements = doc.getElementsByClass(tagName);
-        if (elements != null) {
-            return elements.first().child(0).children();
-        }
-        return null;
-    }
-
     private CodeSortedVo sortCode(List<Ssq> list) {
         CodeSortedVo vo = new CodeSortedVo();
         Map<Integer, Integer> mapR = new TreeMap();
@@ -299,7 +264,7 @@ public class SsqContoller {
             }
             mapR.put(i, 0);
         }
-        for (Ssq ssq : list) {
+        list.stream().forEach(ssq -> {
             Integer r0 = ssq.getR0();
             mapR.put(r0, mapR.get(r0) + 1);
             Integer r1 = ssq.getR1();
@@ -314,21 +279,14 @@ public class SsqContoller {
             mapR.put(r5, mapR.get(r5) + 1);
             Integer b0 = ssq.getB0();
             mapB.put(b0, mapB.get(b0) + 1);
-        }
+        });
         List<Map.Entry<Integer, Integer>> lr = new ArrayList<>(mapR.entrySet());
-        lr.sort(new Comparator<Map.Entry<Integer, Integer>>() {
-            @Override
-            public int compare(Map.Entry<Integer, Integer> o1, Map.Entry<Integer, Integer> o2) {
-                return o1.getValue() - o2.getValue();
-            }
-        });
+        Comparator<Map.Entry<Integer, Integer>> comparator = (o1, o2) -> {
+            return o1.getValue() - o2.getValue();
+        };
+        lr.sort(comparator);
         List<Map.Entry<Integer, Integer>> lb = new ArrayList<>(mapB.entrySet());
-        lb.sort(new Comparator<Map.Entry<Integer, Integer>>() {
-            @Override
-            public int compare(Map.Entry<Integer, Integer> o1, Map.Entry<Integer, Integer> o2) {
-                return o1.getValue() - o2.getValue();
-            }
-        });
+        lb.sort(comparator);
 
         vo.setMapR(mapR);
         vo.setMapB(mapB);
@@ -370,32 +328,35 @@ public class SsqContoller {
         openCodeSort.add(codeSortMapR.get(ssq.getR4()));
         openCodeSort.add(codeSortMapR.get(ssq.getR5()));
         pr.setOpenCodeSort(CollectionUtil.join(openCodeSort, "-") + "+" + codeSortMapB.get(ssq.getB0()));
-        pr.setSortSum(openCodeSort.stream().reduce(0, (pre, i) -> {return pre + i;}));
+        pr.setSortSum(openCodeSort.stream().reduce(0, (pre, i) -> {
+            return pre + i;
+        }));
         return pr;
     }
 
     /**
      * 某概率排序值出现的概率（百分比）
+     *
      * @return
      */
     @GetMapping("rta")
-    public Map<String, Map<Integer, String>> realTimeAnalyze(){
+    public Map<String, Map<Integer, String>> realTimeAnalyze() {
         int totalR = 0;
         int totalB = 0;
         Map<Integer, Integer> mapR = new HashMap<>();
         Map<Integer, Integer> mapB = new HashMap<>();
         List<ProbabilityRank> prs = iProbabilityRankService.selectList(null);
-        for (int i=1; i<=33; i++) {
+        for (int i = 1; i <= 33; i++) {
             mapR.put(i, 0);
-            if (i<17){
+            if (i < 17) {
                 mapB.put(i, 0);
             }
         }
         for (ProbabilityRank pr : prs) {
             String openCodeSort = pr.getOpenCodeSort();
             String[] codes = openCodeSort.split("-");
-            for (int i=0; i<codes.length; i++){
-                if (i<5){
+            for (int i = 0; i < codes.length; i++) {
+                if (i < 5) {
                     int key = Integer.parseInt(codes[i]);
                     mapR.put(key, mapR.get(key) + 1);
                 } else {
@@ -413,11 +374,11 @@ public class SsqContoller {
         Map<Integer, String> mapPercentB = new HashMap<>();
         DecimalFormat df = new DecimalFormat("######0.00");
         for (Map.Entry<Integer, Integer> entry : mapR.entrySet()) {
-            double percent = ((double)entry.getValue()) / totalR;
+            double percent = ((double) entry.getValue()) / totalR;
             mapPercentR.put(entry.getKey(), df.format(percent * 100) + "%");
         }
         for (Map.Entry<Integer, Integer> entry : mapB.entrySet()) {
-            double percent = ((double)entry.getValue()) / totalB;
+            double percent = ((double) entry.getValue()) / totalB;
             mapPercentB.put(entry.getKey(), df.format(percent * 100) + "%");
         }
         Map<String, Map<Integer, String>> result = new HashMap<>(2);
@@ -428,11 +389,12 @@ public class SsqContoller {
 
     /**
      * 某概率排序值出现的概率+排序
+     *
      * @return
      */
     @GetMapping("rta/sort")
-    public Map<String, Map<String, Integer>> realTimeAnalyzeAndSort(String rowFrom){
-        rowFrom = StringUtils.isNotBlank(rowFrom)? rowFrom : "03001";
+    public Map<String, Map<String, Integer>> realTimeAnalyzeAndSort(String rowFrom) {
+        rowFrom = StringUtils.isNotBlank(rowFrom) ? rowFrom : "03001";
         int totalR = 0;
         int totalB = 0;
         Map<Integer, Integer> mapR = new HashMap<>();
@@ -440,17 +402,17 @@ public class SsqContoller {
         Wrapper<ProbabilityRank> wrapper = Condition.create();
         wrapper.ge("ssq_id", rowFrom);
         List<ProbabilityRank> prs = iProbabilityRankService.selectList(wrapper);
-        for (int i=1; i<=33; i++) {
+        for (int i = 1; i <= 33; i++) {
             mapR.put(i, 0);
-            if (i<17){
+            if (i < 17) {
                 mapB.put(i, 0);
             }
         }
         for (ProbabilityRank pr : prs) {
             String openCodeSort = pr.getOpenCodeSort();
             String[] codes = openCodeSort.split("-");
-            for (int i=0; i<codes.length; i++){
-                if (i<5){
+            for (int i = 0; i < codes.length; i++) {
+                if (i < 5) {
                     int key = Integer.parseInt(codes[i]);
                     mapR.put(key, mapR.get(key) + 1);
                 } else {
@@ -468,11 +430,11 @@ public class SsqContoller {
         Map<String, Integer> mapPercentB = new TreeMap<>();
         DecimalFormat df = new DecimalFormat("######0.00");
         for (Map.Entry<Integer, Integer> entry : mapR.entrySet()) {
-            double percent = ((double)entry.getValue()) / totalR;
+            double percent = ((double) entry.getValue()) / totalR;
             mapPercentR.put(df.format(percent * 100) + "%", entry.getKey());
         }
         for (Map.Entry<Integer, Integer> entry : mapB.entrySet()) {
-            double percent = ((double)entry.getValue()) / totalB;
+            double percent = ((double) entry.getValue()) / totalB;
             mapPercentB.put(df.format(percent * 100) + "%", entry.getKey());
         }
         Map<String, Map<String, Integer>> result = new HashMap<>(2);

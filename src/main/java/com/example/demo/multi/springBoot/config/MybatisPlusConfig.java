@@ -7,6 +7,7 @@ import com.baomidou.mybatisplus.plugins.SqlExplainInterceptor;
 import com.baomidou.mybatisplus.spring.MybatisSqlSessionFactoryBean;
 import org.apache.ibatis.mapping.DatabaseIdProvider;
 import org.apache.ibatis.plugin.Interceptor;
+import org.mybatis.spring.annotation.MapperScan;
 import org.mybatis.spring.boot.autoconfigure.MybatisProperties;
 import org.mybatis.spring.boot.autoconfigure.SpringBootVFS;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,6 +21,7 @@ import org.springframework.util.StringUtils;
 import javax.sql.DataSource;
 
 @Configuration
+@MapperScan("com.example.demo.multi.springBoot.mapper")
 public class MybatisPlusConfig {
     @SuppressWarnings("SpringJavaAutowiringInspection")
     @Autowired

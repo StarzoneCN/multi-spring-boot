@@ -15,4 +15,5 @@ import org.apache.ibatis.annotations.Mapper;
 @Mapper
 public interface SsqMapper extends BaseMapper<Ssq> {
 
+    String queryMaxId();
 }

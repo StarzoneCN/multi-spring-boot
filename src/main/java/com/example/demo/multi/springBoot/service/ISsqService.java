@@ -13,4 +13,9 @@ import com.baomidou.mybatisplus.service.IService;
  */
 public interface ISsqService extends IService<Ssq> {
 
+    String queryMaxId();
+
+    void updateData();
+
+    void initSsqData();
 }
