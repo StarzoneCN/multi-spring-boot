@@ -468,4 +468,43 @@ public class SsqContoller {
         iProbabilityRankService.updatePr();
         return "success";
     }
+
+    /**
+     * 获取对应ssqid的code_sort
+     * @return
+     */
+    @RequestMapping("code_sort/{ssqId}")
+    public String codeSort(@PathVariable String ssqId){
+        ProbabilityRank pr = iProbabilityRankService.getOneBySsqidOrFirst(ssqId);
+        if (pr != null){
+            return pr.getCodeSort();
+        }
+        return "Nothing";
+    }
+
+    /**
+     * 获取对应ssqid的ranking
+     * @return
+     */
+    @RequestMapping("ranking/{ssqId}")
+    public String ranking(@PathVariable String ssqId){
+        ProbabilityRank pr = iProbabilityRankService.getOneBySsqidOrFirst(ssqId);
+        if (pr != null){
+            return pr.getRanking();
+        }
+        return "Nothing";
+    }
+
+    /**
+     * 获取对应ssqid的ranking
+     * @return
+     */
+    @RequestMapping("times_code_opened/{ssqId}")
+    public String timesCodeOpened(@PathVariable String ssqId){
+        ProbabilityRank pr = iProbabilityRankService.getOneBySsqidOrFirst(ssqId);
+        if (pr != null){
+            return pr.getTimesCodeOpened();
+        }
+        return "Nothing";
+    }
 }

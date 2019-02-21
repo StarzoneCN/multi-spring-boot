@@ -9,11 +9,11 @@ mybatis:
   mapper-locations: classpath*:mapper/**Mapper.xml
 
 
-logging:
-  level:
-    com:
-      example:
-        demo:
-          multi:
-            springBoot:
-              mapper: debug
+#logging:
+#  level:
+#    com:
+#      example:
+#        demo:
+#          multi:
+#            springBoot:
+#              mapper: debug

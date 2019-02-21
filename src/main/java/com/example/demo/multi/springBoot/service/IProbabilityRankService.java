@@ -18,4 +18,6 @@ public interface IProbabilityRankService extends IService<ProbabilityRank> {
     void updatePr();
 
     String queryMaxSsqId();
+
+    ProbabilityRank getOneBySsqidOrFirst(String ssqId);
 }

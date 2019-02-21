@@ -10,9 +10,11 @@ import com.example.demo.multi.springBoot.entity.Ssq;
 import com.example.demo.multi.springBoot.mapper.ProbabilityRankMapper;
 import com.example.demo.multi.springBoot.service.IProbabilityRankService;
 import com.example.demo.multi.springBoot.service.ISsqService;
+import com.example.demo.multi.springBoot.util.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.bind.annotation.PathVariable;
 
 import java.sql.Wrapper;
 import java.util.*;
@@ -175,5 +177,22 @@ public class ProbabilityRankServiceImpl extends ServiceImpl<ProbabilityRankMappe
     @Override
     public String queryMaxSsqId() {
         return probabilityRankMapper.queryMaxId();
+    }
+
+    /**
+     * 根据ssqid获取pr，如果ssqid为空，返回ssqid最大的记录
+     * @param ssqId probability_rank表的主键
+     * @return
+     */
+    @Override
+    public ProbabilityRank getOneBySsqidOrFirst(String ssqId) {
+        Condition condition = new Condition();
+        condition.last("limit 1");
+        if (StringUtils.isBlank(ssqId)){
+            condition.orderBy("ssq_id", false);
+        } else {
+            condition.eq("ssq_id", ssqId);
+        }
+        return selectOne(condition);
     }
 }
