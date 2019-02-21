@@ -102,6 +102,7 @@ public class SsqContoller {
      * @return 每个号码的开出次数，如1:343-表示#1球开出343次；
      */
     @RequestMapping("count")
+    @Deprecated
     public Map<String, Map<Integer, Integer>> count() {
         List<Ssq> list = iSsqService.selectList(null);
         HashMap<String, Map<Integer, Integer>> result = list.stream().reduce(new HashMap<String, Map<Integer, Integer>>() {{
@@ -151,6 +152,7 @@ public class SsqContoller {
      * @return
      */
     @RequestMapping("ipr/{from}")
+    @Deprecated
     public String initProbabilityRank(@PathVariable("from") String rowFrom) {
         rowFrom = StringUtils.isNotBlank(rowFrom) ? rowFrom : "11118";
         List<Ssq> list = iSsqService.selectList(null);
@@ -195,6 +197,7 @@ public class SsqContoller {
      * @return
      */
     @RequestMapping("cocs")
+    @Deprecated
     public String computeOpenCodeSort(String ssqId) {
         Map<String, Map<String, Integer>> map = getComputedOpenCodeSort(ssqId);
         return JSONUtil.toJsonStr(map);
@@ -207,6 +210,7 @@ public class SsqContoller {
      * @return
      */
     @RequestMapping("rcocs")
+    @Deprecated
     public String reverseComputedOpenCodeSort(String ssqId) {
         Map<String, Map<String, Integer>> map = getComputedOpenCodeSort(ssqId);
         Map<Integer, Integer> mapR = new HashMap<>();
@@ -340,6 +344,7 @@ public class SsqContoller {
      * @return
      */
     @GetMapping("rta")
+    @Deprecated
     public Map<String, Map<Integer, String>> realTimeAnalyze() {
         int totalR = 0;
         int totalB = 0;
@@ -393,6 +398,7 @@ public class SsqContoller {
      * @return
      */
     @GetMapping("rta/sort")
+    @Deprecated
     public Map<String, Map<String, Integer>> realTimeAnalyzeAndSort(String rowFrom) {
         rowFrom = StringUtils.isNotBlank(rowFrom) ? rowFrom : "03001";
         int totalR = 0;
@@ -441,5 +447,25 @@ public class SsqContoller {
         result.put("red", mapPercentR);
         result.put("blue", mapPercentB);
         return result;
+    }
+
+    /**
+     * 初始化probability_rank表
+     * @return
+     */
+    @RequestMapping("pr/init")
+    public String initPr(){
+        iProbabilityRankService.initPr();
+        return "success";
+    }
+
+    /**
+     * 更新probability_rank表
+     * @return
+     */
+    @RequestMapping("pr/update")
+    public String updatePr(){
+        iProbabilityRankService.updatePr();
+        return "success";
     }
 }

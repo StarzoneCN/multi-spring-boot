@@ -13,4 +13,8 @@
 		<result column="update_time" property="updateTime" />
 	</resultMap>
 
+    <select id="queryMaxId" resultType="java.lang.String">
+		SELECT MAX(ssq_id) FROM `probability_rank`
+	</select>
+
 </mapper>

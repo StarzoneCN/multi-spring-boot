@@ -13,4 +13,9 @@ import com.baomidou.mybatisplus.service.IService;
  */
 public interface IProbabilityRankService extends IService<ProbabilityRank> {
 
+    void initPr();
+
+    void updatePr();
+
+    String queryMaxSsqId();
 }

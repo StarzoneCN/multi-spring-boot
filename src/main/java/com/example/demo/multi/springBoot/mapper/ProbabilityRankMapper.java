@@ -15,4 +15,5 @@ import org.apache.ibatis.annotations.Mapper;
 @Mapper
 public interface ProbabilityRankMapper extends BaseMapper<ProbabilityRank> {
 
+    String queryMaxId();
 }
