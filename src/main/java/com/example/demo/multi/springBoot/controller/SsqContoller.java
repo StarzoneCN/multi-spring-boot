@@ -473,7 +473,7 @@ public class SsqContoller {
      * 获取对应ssqid的code_sort
      * @return
      */
-    @RequestMapping("code_sort/{ssqId}")
+    @RequestMapping(value = {"code_sort/{ssqId}", "code_sort"})
     public String codeSort(@PathVariable String ssqId){
         ProbabilityRank pr = iProbabilityRankService.getOneBySsqidOrFirst(ssqId);
         if (pr != null){
@@ -486,8 +486,8 @@ public class SsqContoller {
      * 获取对应ssqid的ranking
      * @return
      */
-    @RequestMapping("ranking/{ssqId}")
-    public String ranking(@PathVariable String ssqId){
+    @RequestMapping(value = {"ranking/{ssqId}", "ranking"})
+    public String ranking(@PathVariable(required = false) String ssqId){
         ProbabilityRank pr = iProbabilityRankService.getOneBySsqidOrFirst(ssqId);
         if (pr != null){
             return pr.getRanking();
@@ -499,7 +499,7 @@ public class SsqContoller {
      * 获取对应ssqid的ranking
      * @return
      */
-    @RequestMapping("times_code_opened/{ssqId}")
+    @RequestMapping(value = {"times_code_opened/{ssqId}", "times_code_opened"})
     public String timesCodeOpened(@PathVariable String ssqId){
         ProbabilityRank pr = iProbabilityRankService.getOneBySsqidOrFirst(ssqId);
         if (pr != null){
