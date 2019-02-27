@@ -4,10 +4,10 @@
 	<modelVersion>4.0.0</modelVersion>
 
 	<groupId>com.example</groupId>
-	<artifactId>demo-multi-spring-boot</artifactId>
+	<artifactId>filebeat-test-jar</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 
-	<name>demo-multi-spring-boot</name>
+	<name>filebeat-test-jar</name>
 	<description>Demo project for Spring Boot</description>
 
 	<parent>
@@ -39,6 +39,12 @@
 			<groupId>org.apache.commons</groupId>
 			<artifactId>commons-lang3</artifactId>
 			<version>3.8.1</version>
+		</dependency>
+
+		<dependency>
+			<groupId>com.alibaba</groupId>
+			<artifactId>fastjson</artifactId>
+			<version>1.2.56</version>
 		</dependency>
 	</dependencies>
 
