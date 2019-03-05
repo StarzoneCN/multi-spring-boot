@@ -1,0 +1,12 @@
+server:
+  compression:
+    enabled: true
+  ssl:
+    key-store: classpath:keystore.jks
+    key-store-password: 123456
+    key-password: 123456
+    enabled: true
+    protocol: TLSv1.2
+  http2:
+    enabled: true
+  port: 8443
