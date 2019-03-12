@@ -5,6 +5,7 @@ import org.junit.Test;
 import java.math.RoundingMode;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 
 /**
  * @author: LiHongxing
@@ -16,8 +17,7 @@ public class EasyTester {
 
     @Test
     public void test(){
-        String s = null;
-        System.out.println(s);
+        Arrays.stream("fdsafds fdsafds   fdsafdsa fdsafds".split(" +")).forEach(s -> System.out.println(s));
     }
 
     @Test
