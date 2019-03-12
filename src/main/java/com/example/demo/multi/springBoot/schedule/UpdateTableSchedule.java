@@ -27,7 +27,7 @@ public class UpdateTableSchedule {
      * 每月1号触发，因为体彩中心的接口最多可查询前20期的数据
      */
     @Transactional
-    @Scheduled(cron = "0 0 0 1 * ?")
+    @Scheduled(cron = "0 18 21 ? * 2,4,7")
     public void updateData(){
         ssqService.updateData();
         probabilityRankService.updatePr();
