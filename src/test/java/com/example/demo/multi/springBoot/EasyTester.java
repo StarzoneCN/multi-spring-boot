@@ -1,10 +1,16 @@
 package com.example.demo.multi.springBoot;
 
+import com.example.demo.multi.springBoot.service.TestService;
 import org.junit.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
+import java.beans.Introspector;
+import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.text.DecimalFormat;
-import java.util.ArrayList;
+import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * @author: LiHongxing
@@ -12,12 +18,12 @@ import java.util.ArrayList;
  * @date: Create in 2018/6/8 14:16
  * @modefied:
  */
+@Component
 public class EasyTester {
 
     @Test
     public void test(){
-        String s = null;
-        System.out.println(s);
+        System.out.println(null instanceof String);
     }
 
     @Test
