@@ -58,6 +58,20 @@ public class AuthFilter implements Filter {
             }
         }
 
+        if (StringUtils.isBlank(token)){
+            String refererUri = req.getHeader("Referer");
+            System.out.println("refererUri = " + refererUri);
+            if (StringUtils.isNotBlank(refererUri) && refererUri.indexOf("token") > -1){
+                String afterParamTokenStr = refererUri.substring(refererUri.indexOf("token")+6);
+                if (afterParamTokenStr.indexOf("&") > -1) {
+                    token = afterParamTokenStr.substring(0, afterParamTokenStr.indexOf("&"));
+                } else {
+                    token = afterParamTokenStr;
+                }
+            }
+        }
+        System.out.println("token = " + token);
+
         String sysPattern = HttpProperties.getVal("sys_pattern");
         if (sysPattern == null || "".equals(sysPattern)) {
             sysPattern = "develop";
@@ -86,6 +100,7 @@ public class AuthFilter implements Filter {
             } else {
                 try {
                     if (RedisUtil.exists("portal_token_" + token)) {
+                        System.out.println("redis中存在对应session");
                         if (isLogin) {
                             RedisUtil.setTimeOut("portal_token_" + token, 604800);
                         } else {
