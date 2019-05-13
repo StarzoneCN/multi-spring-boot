@@ -97,41 +97,12 @@ public class AuthFilter implements Filter {
                 chain.doFilter(req, response);
             } else if (session != null && session.getAttribute("user") != null) {
                 chain.doFilter(req, response);
+            }  else if (req.getHeader("x-requested-with") != null && req.getHeader("x-requested-with").equals("XMLHttpRequest")) {
+                logger.warn("---session超时,请重新登录---");
+                res.setHeader("sessionstatus", "timeout");
             } else {
-                try {
-                    if (RedisUtil.exists("portal_token_" + token)) {
-                        System.out.println("redis中存在对应session");
-                        if (isLogin) {
-                            RedisUtil.setTimeOut("portal_token_" + token, 604800);
-                        } else {
-                            RedisUtil.setTimeOut("portal_token_" + token, 7200);
-                        }
-
-                        String tokenString = RedisUtil.get("portal_token_" + token);
-                        JSONObject jsonToken = JSONObject.fromObject(tokenString);
-                        UserInfo user = (UserInfo)JSONObject.toBean(jsonToken.getJSONObject("user"), UserInfo.class);
-                        session.setAttribute("user", user);
-                        String roleCode = jsonToken.getString("roleCode");
-                        session.setAttribute("roleCode", roleCode);
-                        String companyNum = jsonToken.getString("companyNum");
-                        session.setAttribute("companyNum", companyNum);
-                        session.setAttribute("token", token);
-                        chain.doFilter(req, response);
-                        return;
-                    } else {
-                        if (req.getHeader("x-requested-with") != null && req.getHeader("x-requested-with").equals("XMLHttpRequest")) {
-                            logger.warn("---session超时,请重新登录---");
-                            res.setHeader("sessionstatus", "timeout");
-                        } else {
-                            res.setStatus(401);
-                            logger.error("---AuthFilter:Redis异常---");
-                        }
-
-                        return;
-                    }
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
+                logger.warn("---[" + requestUri + "]  must be login---");
+                res.setStatus(401);
             }
         } else {
             isExcludeUrl = false;
