@@ -16,8 +16,7 @@ public class EasyTester {
 
     @Test
     public void test(){
-        String s = null;
-        System.out.println(s);
+        System.out.println(Long.MAX_VALUE);
     }
 
     @Test
