@@ -7,9 +7,5 @@ spring:
     database: 1
 
 
-server:
-  port: 80
-
-
 
 

@@ -69,13 +69,13 @@
 	<profiles>
 		<profile>
 			<!--develop-->
-			<id>develop-profile</id>
+			<id>dev-profile</id>
 			<activation>
 				<!--默认激活-->
 				<activeByDefault>true</activeByDefault>
 			</activation>
 			<properties>
-				<active.profile>develop</active.profile>
+				<active.profile>dev</active.profile>
 			</properties>
 			<dependencies>
 				<dependency>
