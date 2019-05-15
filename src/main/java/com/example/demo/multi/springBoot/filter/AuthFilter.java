@@ -87,7 +87,7 @@ public class AuthFilter implements Filter {
                     break;
                 }
 
-                if (requestUri.indexOf(req.getContextPath() + this.excludeUrlArray[i]) >= 0) {
+                if (requestUri.indexOf((req.getContextPath() + this.excludeUrlArray[i]).trim()) >= 0) {
                     isExcludeUrl = true;
                     break;
                 }

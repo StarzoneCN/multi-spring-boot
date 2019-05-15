@@ -4,6 +4,7 @@ import org.apache.log4j.Logger;
 import redis.clients.jedis.Jedis;
 import redis.clients.jedis.JedisPool;
 import redis.clients.jedis.JedisPoolConfig;
+import redis.clients.jedis.params.SetParams;
 
 public class RedisUtil {
     private final static Logger LOGGER = Logger.getLogger(RedisUtil.class);
@@ -108,6 +109,38 @@ public class RedisUtil {
                 return null;
             }
             return jedis.get(key);
+        }
+    }
+
+    public static Long del(String key){
+        try(Jedis jedis = jedis()) {
+            if (jedis == null){
+                LOGGER.warn(MSG_WARN_NO_REDIS_RESOURCE);
+                return null;
+            }
+            return jedis.del(key);
+        }
+    }
+
+    public static String set(String key, String value){
+        try(Jedis jedis = jedis()) {
+            if (jedis == null){
+                LOGGER.warn(MSG_WARN_NO_REDIS_RESOURCE);
+                return null;
+            }
+            return jedis.set(key, value);
+        }
+    }
+
+    public static String set(String key, String value, int expire){
+        try(Jedis jedis = jedis()) {
+            if (jedis == null){
+                LOGGER.warn(MSG_WARN_NO_REDIS_RESOURCE);
+                return null;
+            }
+            SetParams setParams = new SetParams();
+            setParams.ex(expire);
+            return jedis.set(key, value, setParams);
         }
     }
 }

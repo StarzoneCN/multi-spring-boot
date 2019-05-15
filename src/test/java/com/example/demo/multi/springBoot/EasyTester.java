@@ -23,7 +23,12 @@ public class EasyTester {
 
     @Test
     public void test(){
-        System.out.println(null instanceof String);
+        List<Integer> list = new ArrayList<>();
+        list.add(1);
+        list.add(2);
+        list.add(3);
+        list.add(4);
+        list.stream().filter(i -> i > 2).limit(2).forEach(i -> System.out.println(i));
     }
 
     @Test
