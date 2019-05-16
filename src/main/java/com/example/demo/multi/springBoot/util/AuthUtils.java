@@ -5,6 +5,7 @@ import java.awt.image.BufferedImage;
 import java.util.Random;
 
 public class AuthUtils {
+    private static final String VERIFY_CODE_FONT = "Times New Roman";
 
     public static VarificationCodeAndImageVo createVarificationCode(){
         // 在内存中创建图象
@@ -23,7 +24,7 @@ public class AuthUtils {
         g.fillRect(0, 0, width, height);
 
         //设定字体
-        g.setFont(new Font("Times New Roman", Font.PLAIN, 20));
+        g.setFont(new Font(VERIFY_CODE_FONT, Font.PLAIN, 20));
 
         //画边框
         //g.setColor(new Color());
