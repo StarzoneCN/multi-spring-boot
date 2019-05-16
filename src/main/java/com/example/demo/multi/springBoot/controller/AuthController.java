@@ -2,13 +2,16 @@ package com.example.demo.multi.springBoot.controller;
 
 import cn.com.bluemoon.common.user.po.UserInfo;
 import cn.com.bluemoon.service.user.service.SsoService;
+import com.example.demo.multi.springBoot.constant.ResponseCodeEnum;
+import com.example.demo.multi.springBoot.dto.AccountAndMobileDto;
 import com.example.demo.multi.springBoot.dto.LoginDto;
+import com.example.demo.multi.springBoot.dto.ResetPassDto;
 import com.example.demo.multi.springBoot.util.AuthUtils;
 import com.example.demo.multi.springBoot.util.RedisUtil;
+import com.example.demo.multi.springBoot.vo.CommonResponseVo;
 import net.sf.json.JSONObject;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.dubbo.config.annotation.Reference;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import javax.imageio.ImageIO;
@@ -17,9 +20,9 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import java.io.IOException;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Map;
-import java.util.Set;
+
+import static com.example.demo.multi.springBoot.constant.StringConstants.*;
 
 @RestController
 @RequestMapping("auth")
@@ -58,46 +61,39 @@ public class AuthController {
     }
 
     @PostMapping("login")
-    public Map<String, Object> login(HttpSession session, @RequestBody LoginDto loginDto){
-        String responseMsg = "网络繁忙，请稍后再试";
-        int responseCode = -1;
-        Boolean isSuccess = Boolean.FALSE;
-        Map<String, Object> result = new HashMap<String, Object>();
-        result.put("responseMsg", responseMsg);
-        result.put("responseCode", responseCode);
-        result.put("isSuccess", isSuccess);
-
+    public CommonResponseVo login(HttpSession session, @RequestBody LoginDto loginDto){
+        CommonResponseVo responseVo = new CommonResponseVo();
         if (StringUtils.isBlank(loginDto.getAccount())) {
-            result.put("responseMsg", "用户名不能为空");
-            result.put("responseCode", 2202);
-            return result;
+            responseVo.setCode(ResponseCodeEnum.BAD_PARAMS);
+            responseVo.setMsg(" ");  // todo 配置messageResource
+            return responseVo;
         }
 
         if (StringUtils.isBlank(loginDto.getPassword())) {
-            result.put("responseMsg", "密码不能为空");
-            result.put("responseCode", 2203);
-            return result;
+            responseVo.setCode(ResponseCodeEnum.BAD_PARAMS);
+            responseVo.setMsg(" ");  // todo 配置messageResource
+            return responseVo;
         }
 
         if (StringUtils.isBlank(loginDto.getRand())) {
-            result.put("responseMsg", "验证码不能为空");
-            result.put("responseCode", 2204);
-            return result;
+            responseVo.setCode(ResponseCodeEnum.BAD_PARAMS);
+            responseVo.setMsg(" ");  // todo 配置messageResource
+            return responseVo;
         }
 
         if (!RedisUtil.exists("key_rand_" + session.getId())) {
-            result.put("responseMsg", "验证码已失效，请重新登录");
-            result.put("responseCode", 1302);
-            return result;
+            responseVo.setCode(ResponseCodeEnum.BAD_PARAMS);
+            responseVo.setMsg("验证码已失效，请重新登录");  // todo 配置messageResource
+            return responseVo;
         }
 
         // 从redis中获取当前回话的验证码
         String randCode = RedisUtil.get("key_rand_" + session.getId());
         // String randCode = (String) session.getAttribute("rand");
         if (!loginDto.getRand().equals(randCode)) {
-            result.put("responseMsg", "验证码错误");
-            result.put("responseCode", 1301);
-            return result;
+            responseVo.setCode(ResponseCodeEnum.BAD_PARAMS);
+            responseVo.setMsg("验证码错误");
+            return responseVo;
         }
 
         try {
@@ -106,7 +102,7 @@ public class AuthController {
             obj.put("password", loginDto.getPassword());
             String res = ssoService.ssoLogin(obj);
             JSONObject param = JSONObject.fromObject(res);
-            if ((Boolean) param.get("isSuccess") == true) {
+            if ((Boolean) param.get(SSO_RESPONSE_SUCCESS_FLAG) == true) {
                 // 用户信息存入session
                 String userStr = ssoService.getUserInfo(obj);
                 JSONObject userJson = JSONObject.fromObject(userStr);
@@ -122,17 +118,93 @@ public class AuthController {
 
                 String roleCode = authService.getRoleCodeList(user.getAccount());
                 session.setAttribute("roleCode", roleCode == null ? "" : roleCode);*/
+                responseVo.setCode(ResponseCodeEnum.SUCCESS);
+                return responseVo;
             }
-            result.put("isSuccess", param.get("isSuccess"));
-            result.put("responseMsg", param.get("responseMsg"));
-            result.put("responseCode", param.get("responseCode"));
-
-            return result;
+            responseVo.setCode(ResponseCodeEnum.FAIL_2_EXE);
+            responseVo.setMsg(param.getString(SSO_RESPONSE_MSG_FLAG));
+            return responseVo;
 
         } catch (Exception e) {
             e.printStackTrace();
+            responseVo.setCode(ResponseCodeEnum.FAIL_2_EXE);
+            return responseVo;
         }
-        return result;
+    }
 
+    @RequestMapping(value = "/getVerifyCode", method = RequestMethod.POST)
+    public CommonResponseVo<Integer> getVerifyCode(@RequestBody AccountAndMobileDto aamDto) {
+        if (StringUtils.isBlank(aamDto.getAccount()) || StringUtils.isBlank(aamDto.getMobileNo())){
+            CommonResponseVo<Integer> responseVo = new CommonResponseVo<Integer>(){{
+                this.setCode(ResponseCodeEnum.BAD_PARAMS);
+                this.setMsg(ResponseCodeEnum.BAD_PARAMS.msg());
+            }};
+            return responseVo;
+        }
+        JSONObject params = new JSONObject();
+        params.put("account", aamDto.getAccount());
+        params.put("mobileNo", aamDto.getMobileNo());
+        CommonResponseVo responseVo = new CommonResponseVo();
+        try {
+            String res = ssoService.getVerifyCode(params);
+            JSONObject param = JSONObject.fromObject(res);
+            if (param.getBoolean(SSO_RESPONSE_SUCCESS_FLAG)){
+                responseVo.setCode(ResponseCodeEnum.SUCCESS);
+                responseVo.setData(param.getInt("time"));
+                return responseVo;
+            }
+            ResponseCodeEnum responseCodeEnum = ResponseCodeEnum.instance(Integer.parseInt(params.getString(SSO_RESPONSE_CODE_FLAG)));
+            responseVo.setCode(responseCodeEnum);
+            responseVo.setMsg(responseCodeEnum.msg());
+        } catch (EnumConstantNotPresentException e) {
+            e.printStackTrace(); // todo 添加日志
+            responseVo.setCode(ResponseCodeEnum.FAIL_2_EXE);
+            responseVo.setMsg(params.getString(SSO_RESPONSE_SUCCESS_FLAG));
+        } catch (Exception e) {
+            e.printStackTrace(); // todo 添加日志
+            responseVo.setCode(ResponseCodeEnum.FAIL_2_EXE);
+            responseVo.setMsg(ResponseCodeEnum.FAIL_2_EXE.msg());
+        }
+
+        return responseVo;
+    }
+
+    @PostMapping("resetPass")
+    public CommonResponseVo resetPass(@RequestBody ResetPassDto resetPassDto){
+        CommonResponseVo responseVo = new CommonResponseVo();
+        if (StringUtils.isBlank(resetPassDto.getMobileNO())
+                || StringUtils.isBlank(resetPassDto.getVerifyCode())
+                || StringUtils.isBlank(resetPassDto.getNewPassword())) {
+            responseVo.setCode( ResponseCodeEnum.BAD_PARAMS);
+            responseVo.setMsg( ResponseCodeEnum.BAD_PARAMS.msg());
+            return responseVo;
+        }
+        try {
+            JSONObject params = new JSONObject();
+            params.put("verifyCode", resetPassDto.getVerifyCode());
+            params.put("mobileNo", resetPassDto.getMobileNO());
+            params.put("newPassword", resetPassDto.getNewPassword());
+            String res = ssoService.resetPassword(params);
+
+            JSONObject param = JSONObject.fromObject(res);
+            if (param.getBoolean(SSO_RESPONSE_SUCCESS_FLAG)){
+                responseVo.setCode(ResponseCodeEnum.SUCCESS);
+                return responseVo;
+            }
+
+            try {
+                ResponseCodeEnum responseCodeEnum = ResponseCodeEnum.instance(param.getInt(SSO_RESPONSE_CODE_FLAG));
+                responseVo.setCode(responseCodeEnum);
+                responseVo.setMsg(responseCodeEnum.msg());
+            } catch (EnumConstantNotPresentException e) {
+                responseVo.setCode(ResponseCodeEnum.FAIL_2_EXE);
+                responseVo.setMsg(param.getString(SSO_RESPONSE_MSG_FLAG));
+            }
+        } catch (Exception e) {
+            e.printStackTrace(); // todo 日志
+            responseVo.setCode(ResponseCodeEnum.FAIL_2_EXE);
+            responseVo.setMsg(ResponseCodeEnum.FAIL_2_EXE.msg());
+        }
+        return responseVo;
     }
 }
