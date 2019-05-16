@@ -12,7 +12,7 @@ Configutation:
       name: Console_Appender
       target: SYSTEM_OUT
       PatternLayout:
-        pattern: "%highlight{[%-5level] %d{yyyy-MM-dd HH:mm:ss.SSS} [%t] %c{1}$%M - %msg%n}"
+        pattern: "[%highlight{%-5level}] %d{yyyy-MM-dd HH:mm:ss.SSS} [%t] %c{1}$%M - %msg%n"
 
     File:
       name: File_Appender
