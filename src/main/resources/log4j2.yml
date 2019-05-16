@@ -6,32 +6,38 @@ Configutation:
       name: log-path
       value: "logs"
 
-  Appenders:
 
+  Appenders:
     Console:
       name: Console_Appender
       target: SYSTEM_OUT
+      direct: true
       PatternLayout:
         pattern: "[%highlight{%-5level}] %d{yyyy-MM-dd HH:mm:ss.SSS} [%t] %c{1}$%M - %msg%n"
 
-    File:
-      name: File_Appender
-      fileName: ${log-path}/logfile.log
-      PatternLayout:
-        pattern: "[%-5level] %d{yyyy-MM-dd HH:mm:ss.SSS} [%t] %c{1}$%M - %msg%n"
+    RollingFile:
+      - name: RollingFile_Appender
+        append: true
+        fileName: ${log-path}/runtime.log
+        filePattern: "${log-path}/logBackUp.%d{yyyyMMdd-HHmmss}.log"
+        PatternLayout:
+          pattern: "[%-5level] %d{yyyy-MM-dd HH:mm:ss.SSS} [%t] %c{1} - %msg%n"
+        Policies:
+          CronTriggeringPolicy:
+            schedule: "0 0 0 * * ?"
+        DefaultRollOverStrategy:
+          useMax: false
 
   Loggers:
       Root:
-        level: info
+        level: warn
         additivity: true
         AppenderRef:
           - ref: Console_Appender
+            level: debug
       logger:
         - name: com.example.demo.multi.springBoot
           additivity: false
-          level: debug
+          level: info
           AppenderRef:
-            - ref: Console_Appender
-              level: warn
-            - ref: File_Appender
-              level: info
+            - ref: RollingFile_Appender
