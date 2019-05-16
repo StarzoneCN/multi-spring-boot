@@ -19,6 +19,8 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import java.io.IOException;
 
+import static com.example.demo.multi.springBoot.constant.StringConstants.SESSION_PREFIX_OF_REDIS_KEY;
+
 public class AuthFilter implements Filter {
     private static Logger logger = Logger.getLogger(AuthFilter.class);
     private String excludeUrl;
@@ -124,14 +126,14 @@ public class AuthFilter implements Filter {
             } else {
                 try {
                     if (token != null && !"".equals(token)) {
-                        if (RedisUtil.exists("portal_token_" + token)) {
+                        if (RedisUtil.exists(SESSION_PREFIX_OF_REDIS_KEY + token)) {
                             if (isLogin) {
-                                RedisUtil.setTimeOut("portal_token_" + token, 604800);
+                                RedisUtil.setTimeOut(SESSION_PREFIX_OF_REDIS_KEY + token, 604800);
                             } else {
-                                RedisUtil.setTimeOut("portal_token_" + token, 7200);
+                                RedisUtil.setTimeOut(SESSION_PREFIX_OF_REDIS_KEY + token, 7200);
                             }
 
-                            String tokenString = RedisUtil.get("portal_token_" + token);
+                            String tokenString = RedisUtil.get(SESSION_PREFIX_OF_REDIS_KEY + token);
                             JSONObject jsonToken = JSONObject.fromObject(tokenString);
                             UserInfo user = (UserInfo)JSONObject.toBean(jsonToken.getJSONObject("user"), UserInfo.class);
                             session.setAttribute("user", user);

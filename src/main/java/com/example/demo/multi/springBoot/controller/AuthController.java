@@ -2,6 +2,7 @@ package com.example.demo.multi.springBoot.controller;
 
 import cn.com.bluemoon.common.user.po.UserInfo;
 import cn.com.bluemoon.service.user.service.SsoService;
+import com.example.demo.multi.springBoot.config.CustomizedMessageSource;
 import com.example.demo.multi.springBoot.constant.ResponseCodeEnum;
 import com.example.demo.multi.springBoot.dto.AccountAndMobileDto;
 import com.example.demo.multi.springBoot.dto.LoginDto;
@@ -12,6 +13,7 @@ import com.example.demo.multi.springBoot.vo.CommonResponseVo;
 import net.sf.json.JSONObject;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.dubbo.config.annotation.Reference;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import javax.imageio.ImageIO;
@@ -30,6 +32,8 @@ public class AuthController {
 
     @Reference
     private SsoService ssoService;
+    @Autowired
+    private CustomizedMessageSource messageSource;
 
 
     @GetMapping("variCode")
@@ -44,13 +48,11 @@ public class AuthController {
 
         // 将认证码存入SESSION
         HttpSession session = request.getSession();
-        session.setAttribute("rand", vo.getCode());
-
         //将生成的验证码根据sessionid存入到redis的缓存中，避免由于nginx轮询造成验证码不匹配的问题
-        if(RedisUtil.exists("key_rand_" + session.getId())){
-            RedisUtil.del("key_rand_" + session.getId());
+        if(RedisUtil.exists(RAND_PREFIX_OF_REDIS_KEY + session.getId())){
+            RedisUtil.del(RAND_PREFIX_OF_REDIS_KEY + session.getId());
         }
-        RedisUtil.set("key_rand_" + session.getId(), session.getAttribute("rand").toString(), 300);
+        RedisUtil.set(RAND_PREFIX_OF_REDIS_KEY + session.getId(), vo.getCode(), 300);
 
         // 输出图象到页面
         try {
@@ -65,31 +67,30 @@ public class AuthController {
         CommonResponseVo responseVo = new CommonResponseVo();
         if (StringUtils.isBlank(loginDto.getAccount())) {
             responseVo.setCode(ResponseCodeEnum.BAD_PARAMS);
-            responseVo.setMsg(" ");  // todo 配置messageResource
+            responseVo.setMsg(messageSource.getMessage("param.cannot.null", "account"));
             return responseVo;
         }
 
         if (StringUtils.isBlank(loginDto.getPassword())) {
             responseVo.setCode(ResponseCodeEnum.BAD_PARAMS);
-            responseVo.setMsg(" ");  // todo 配置messageResource
+            responseVo.setMsg(messageSource.getMessage("param.cannot.null", "password"));
             return responseVo;
         }
 
         if (StringUtils.isBlank(loginDto.getRand())) {
             responseVo.setCode(ResponseCodeEnum.BAD_PARAMS);
-            responseVo.setMsg(" ");  // todo 配置messageResource
+            responseVo.setMsg(messageSource.getMessage("param.cannot.null", "rand"));
             return responseVo;
         }
 
-        if (!RedisUtil.exists("key_rand_" + session.getId())) {
+        if (!RedisUtil.exists(RAND_PREFIX_OF_REDIS_KEY + session.getId())) {
             responseVo.setCode(ResponseCodeEnum.BAD_PARAMS);
-            responseVo.setMsg("验证码已失效，请重新登录");  // todo 配置messageResource
+            responseVo.setMsg(messageSource.getMessage("bad.verify.code"));
             return responseVo;
         }
 
         // 从redis中获取当前回话的验证码
-        String randCode = RedisUtil.get("key_rand_" + session.getId());
-        // String randCode = (String) session.getAttribute("rand");
+        String randCode = RedisUtil.get(RAND_PREFIX_OF_REDIS_KEY + session.getId());
         if (!loginDto.getRand().equals(randCode)) {
             responseVo.setCode(ResponseCodeEnum.BAD_PARAMS);
             responseVo.setMsg("验证码错误");

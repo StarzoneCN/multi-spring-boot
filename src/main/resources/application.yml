@@ -17,3 +17,8 @@ dubbo:
     timeout: 3000
   monitor:
     protocol: registry
+
+
+spring:
+  messages:
+    basename: i18n/messages

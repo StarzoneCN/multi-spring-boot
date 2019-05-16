@@ -1,5 +1,7 @@
 package com.example.demo.multi.springBoot.controller;
 
+import com.example.demo.multi.springBoot.config.CustomizedMessageSource;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -15,9 +17,11 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/")
 public class IndexController {
     private static final String MSG_APP_WELCOME = "欢迎来到Spring-Boot的世界！";
+    @Autowired
+    private CustomizedMessageSource messageSource;
 
     @RequestMapping
     public String index(){
-        return MSG_APP_WELCOME;
+        return messageSource.getMessage("param.cannot.null", "name");
     }
 }
