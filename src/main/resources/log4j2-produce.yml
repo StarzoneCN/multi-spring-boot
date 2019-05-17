@@ -1,0 +1,31 @@
+Configutation:
+name: produce
+
+Properties:
+  Property:
+    name: '/data/logs/demo-multi-spring-boot'
+    value: "logs"
+
+
+Appenders:
+  RollingFile:
+    - name: RollingFile_Appender
+      append: true
+      fileName: ${log-path}/runtime.log
+      filePattern: "${log-path}/logBackUp.%d{yyyyMMdd}.log"
+      PatternLayout:
+        pattern: "[%-5level] %d{yyyy-MM-dd HH:mm:ss.SSS} [%t] %c{1} - %msg%n"
+      Policies:
+        CronTriggeringPolicy:
+          schedule: "0 0 0 ? * 1"
+        SizeBasedTriggeringPolicy:
+          maxFileSize: 104857600
+      DefaultRollOverStrategy:
+        useMax: false
+
+Loggers:
+  Root:
+    level: info
+    additivity: true
+    AppenderRef:
+      - ref: RollingFile_Appender

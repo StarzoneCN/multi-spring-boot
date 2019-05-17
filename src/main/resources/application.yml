@@ -1,6 +1,4 @@
 dubbo:
-  config-center:
-    address: zookeeper://192.168.240.15:2181
   application:
     name: demo-multi-spring-boot
     owner: abc
@@ -10,10 +8,8 @@ dubbo:
   registry:
     id: regi-center-id
     protocol: zookeeper
-    address: 192.168.240.15:2181
   protocol:
     name: dubbo-consumer
-    port: 20880
     timeout: 3000
   monitor:
     protocol: registry
@@ -22,3 +18,6 @@ dubbo:
 spring:
   messages:
     basename: i18n/messages
+
+  profiles:
+    active: @active-profile@

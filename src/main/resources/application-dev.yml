@@ -1,0 +1,13 @@
+dubbo:
+  config-center:
+    address: zookeeper://192.168.240.15:2181
+  registry:
+    address: 192.168.240.15:2181
+  protocol:
+    port: 20880
+
+server:
+  port: 8100
+spring:
+  http:
+    log-request-details: true
