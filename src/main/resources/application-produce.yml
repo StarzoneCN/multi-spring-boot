@@ -8,3 +8,6 @@ dubbo:
 
 server:
   port: 8080
+
+logging:
+  config: classpath:log4j2-produce.yml

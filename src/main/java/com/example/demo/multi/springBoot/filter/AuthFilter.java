@@ -8,8 +8,8 @@ package com.example.demo.multi.springBoot.filter;
 import cn.com.bluemoon.common.user.po.UserInfo;
 import cn.com.bluemoon.portalClient.util.HttpProperties;
 import com.example.demo.multi.springBoot.util.RedisUtil;
+import com.example.demo.multi.springBoot.util.StringUtils;
 import net.sf.json.JSONObject;
-import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 
 import javax.servlet.*;
@@ -175,7 +175,7 @@ public class AuthFilter implements Filter {
 
     public void init(FilterConfig config) throws ServletException {
         this.excludeUrl = HttpProperties.getVal("excludeUrl");
-        if (StringUtils.isNotEmpty(this.excludeUrl)) {
+        if (StringUtils.isNotBlank(this.excludeUrl)) {
             this.excludeUrlArray = this.excludeUrl.split(",");
         }
 

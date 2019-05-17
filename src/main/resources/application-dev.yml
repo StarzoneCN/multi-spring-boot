@@ -11,3 +11,6 @@ server:
 spring:
   http:
     log-request-details: true
+
+logging:
+  config: classpath:log4j2-dev.yml

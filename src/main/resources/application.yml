@@ -21,3 +21,9 @@ spring:
 
   profiles:
     active: @active-profile@
+logging:
+  level:
+    org:
+      springframework:
+        boot:
+          autoconfigure: error

@@ -1,17 +1,17 @@
 Configutation:
-name: dev
+  name: dev
 
-Appenders:
-  Console:
-    name: Console_Appender
-    target: SYSTEM_OUT
-    direct: true
-    PatternLayout:
-      pattern: "[%highlight{%-5level}] %d{yyyy-MM-dd HH:mm:ss.SSS} [%t] %c{1}$%M - %msg%n"
+  Appenders:
+    Console:
+      name: Console_Appender
+      target: SYSTEM_OUT
+      direct: true
+      PatternLayout:
+        pattern: "[%highlight{%-5level}] %d{yyyy-MM-dd HH:mm:ss.SSS} [%t] %c{1}$%M - %msg%n"
 
-Loggers:
-  Root:
-    level: debug
-    additivity: true
-    AppenderRef:
-      - ref: Console_Appender
+  Loggers:
+    Root:
+      level: debug
+      additivity: true
+      AppenderRef:
+        - ref: Console_Appender
