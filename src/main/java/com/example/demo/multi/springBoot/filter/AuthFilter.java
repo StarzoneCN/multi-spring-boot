@@ -1,17 +1,16 @@
-//
-// Source code recreated from a .class file by IntelliJ IDEA
-// (powered by Fernflower decompiler)
-//
-
 package com.example.demo.multi.springBoot.filter;
 
 import cn.com.bluemoon.common.user.po.UserInfo;
-import cn.com.bluemoon.portalClient.util.HttpProperties;
-import com.example.demo.multi.springBoot.util.RedisUtil;
 import com.example.demo.multi.springBoot.util.StringUtils;
 import net.sf.json.JSONObject;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.redis.core.StringRedisTemplate;
+import org.springframework.data.redis.core.ValueOperations;
+import org.springframework.stereotype.Component;
 
 import javax.servlet.*;
 import javax.servlet.http.Cookie;
@@ -19,53 +18,78 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import java.io.IOException;
+import java.util.Arrays;
+import java.util.Optional;
+import java.util.concurrent.TimeUnit;
 
 import static com.example.demo.multi.springBoot.constant.StringConstants.SESSION_PREFIX_OF_REDIS_KEY;
 
+@Component
 public class AuthFilter implements Filter {
-    private static Logger logger = LogManager.getLogger(AuthFilter.class);
-    private String excludeUrl;
-    private String[] excludeUrlArray;
-    private FilterConfig config;
+    private static final Logger LOGGER = LogManager.getLogger(AuthFilter.class);
 
-    public AuthFilter() {
+    @Value("active-profile")
+    private String environment;
+    @Autowired
+    @Qualifier("stringValueOperations")
+    private ValueOperations valueOperations;
+    @Autowired
+    private StringRedisTemplate redisTemplate;
+
+    @Override
+    public void init(FilterConfig filterConfig) throws ServletException {
+
     }
 
-    public void destroy() {
-        this.config = null;
-    }
-
+    @Override
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
-        HttpServletRequest req = (HttpServletRequest)request;
-        HttpServletResponse res = (HttpServletResponse)response;
-        HttpSession session = req.getSession();
+        HttpServletRequest httpServletRequest = (HttpServletRequest) request;
+        HttpServletResponse httpServletResponse = (HttpServletResponse)response;
+        HttpSession session = httpServletRequest.getSession();
+        if (StringUtils.isBlank(environment) || "dev".equals(environment)){
+            /*dev环境*/
+            if (session != null && session.getAttribute("user") != null){
+                chain.doFilter(httpServletRequest, httpServletResponse);
+                return;
+            } else if (httpServletRequest.getHeader("x-requested-with") != null
+                    && httpServletRequest.getHeader("x-requested-with").equals("XMLHttpRequest")) {
+                /*Ajax异步请求*/
+                LOGGER.warn("---session超时,请重新登录---");
+                httpServletResponse.setHeader("sessionstatus", "timeout");
+                return;
+            }
+            httpServletResponse.setStatus(401);
+            return;
+        }
+
+
+        final String requestUri = httpServletRequest.getRequestURI();
+        String token = httpServletRequest.getQueryString() != null
+                && httpServletRequest.getQueryString().indexOf("token") != -1 ?
+                httpServletRequest.getParameter("token") : null;
+        if (StringUtils.isBlank(token) && session != null
+                && StringUtils.isNotBlank((String)(session.getAttribute("token")))){
+            token = (String)session.getAttribute("token");
+        }
         boolean isLogin = false;
-        String requestUri = req.getRequestURI();
-        String token = req.getQueryString() != null && req.getQueryString().indexOf("token") != -1 ? req.getParameter("token") : null;
-        String cookieToken = "";
-        Cookie[] cookies = req.getCookies();
-        if (cookies != null) {
-            for(int i = 0; i < cookies.length; ++i) {
-                Cookie cookie = cookies[i];
-                if ("token".equals(cookie.getName()) && !StringUtils.isEmpty(cookie.getValue())) {
-                    cookieToken = cookie.getValue();
+        if (StringUtils.isBlank(token)){
+            /*从cookie中获取token*/
+            Cookie[] cookies = httpServletRequest.getCookies();
+            if (cookies != null && cookies.length > 0){
+                Optional<String> cookieTokenOptional = Arrays.stream(cookies)
+                        .filter(c -> "token".equals(c.getName()) && StringUtils.isNotBlank(c.getValue()))
+                        .map(c -> c.getValue())
+                        .findFirst();
+                if (cookieTokenOptional.isPresent()){
+                    token = cookieTokenOptional.get();
                     isLogin = true;
                 }
             }
         }
-
-        if (StringUtils.isEmpty(token)) {
-            token = session != null && session.getAttribute("token") != null ? (String)session.getAttribute("token") : "";
-            if (StringUtils.isEmpty(token) && req != null && !StringUtils.isEmpty(cookieToken)) {
-                token = cookieToken;
-            }
-        }
-
         if (StringUtils.isBlank(token)){
-            String refererUri = req.getHeader("Referer");
-            System.out.println("refererUri = " + refererUri);
+            final String refererUri = httpServletRequest.getHeader("Referer");
             if (StringUtils.isNotBlank(refererUri) && refererUri.indexOf("token") > -1){
-                String afterParamTokenStr = refererUri.substring(refererUri.indexOf("token")+6);
+                final String afterParamTokenStr = refererUri.substring(refererUri.indexOf("token")+6);
                 if (afterParamTokenStr.indexOf("&") > -1) {
                     token = afterParamTokenStr.substring(0, afterParamTokenStr.indexOf("&"));
                 } else {
@@ -73,113 +97,50 @@ public class AuthFilter implements Filter {
                 }
             }
         }
-        System.out.println("token = " + token);
-
-        String sysPattern = HttpProperties.getVal("sys_pattern");
-        if (sysPattern == null || "".equals(sysPattern)) {
-            sysPattern = "develop";
-        }
-
-        boolean isExcludeUrl;
-        if ("develop".equals(sysPattern)) {
-            isExcludeUrl = false;
-
-            for(int i = 0; i < this.excludeUrlArray.length; ++i) {
-                if (requestUri.indexOf("/js/") >= 0 || requestUri.indexOf("/images/") >= 0 || requestUri.indexOf("/css/") >= 0) {
-                    isExcludeUrl = true;
-                    break;
-                }
-
-                if (requestUri.indexOf((req.getContextPath() + this.excludeUrlArray[i]).trim()) >= 0) {
-                    isExcludeUrl = true;
-                    break;
-                }
-            }
-
-            if (isExcludeUrl) {
-                chain.doFilter(req, response);
-            } else if (session != null && session.getAttribute("user") != null) {
-                chain.doFilter(req, response);
-            }  else if (req.getHeader("x-requested-with") != null && req.getHeader("x-requested-with").equals("XMLHttpRequest")) {
-                logger.warn("---session超时,请重新登录---");
-                res.setHeader("sessionstatus", "timeout");
+        if (StringUtils.isBlank(token)){
+            if (httpServletRequest.getHeader("x-requested-with") != null
+                    && httpServletRequest.getHeader("x-requested-with").equals("XMLHttpRequest")) {
+                /*Ajax异步请求*/
+                LOGGER.warn("---session超时,请重新登录---");
+                httpServletResponse.setHeader("sessionstatus", "timeout");
             } else {
-                logger.warn("---[" + requestUri + "]  must be login---");
-                res.setStatus(401);
+                httpServletResponse.setStatus(401);
             }
-        } else {
-            isExcludeUrl = false;
-
-            for(int i = 0; i < this.excludeUrlArray.length; ++i) {
-                if (requestUri.indexOf("/js/") >= 0 || requestUri.indexOf("/images/") >= 0 || requestUri.indexOf("/css/") >= 0) {
-                    isExcludeUrl = true;
-                    break;
-                }
-
-                if (requestUri.indexOf(req.getContextPath() + this.excludeUrlArray[i]) >= 0 && !"/login.jsp".equals(this.excludeUrlArray[i])) {
-                    isExcludeUrl = true;
-                    break;
-                }
-            }
-
-            if (isExcludeUrl) {
-                chain.doFilter(req, response);
-            } else {
-                try {
-                    if (token != null && !"".equals(token)) {
-                        if (RedisUtil.exists(SESSION_PREFIX_OF_REDIS_KEY + token)) {
-                            if (isLogin) {
-                                RedisUtil.setTimeOut(SESSION_PREFIX_OF_REDIS_KEY + token, 604800);
-                            } else {
-                                RedisUtil.setTimeOut(SESSION_PREFIX_OF_REDIS_KEY + token, 7200);
-                            }
-
-                            String tokenString = RedisUtil.get(SESSION_PREFIX_OF_REDIS_KEY + token);
-                            JSONObject jsonToken = JSONObject.fromObject(tokenString);
-                            UserInfo user = (UserInfo)JSONObject.toBean(jsonToken.getJSONObject("user"), UserInfo.class);
-                            session.setAttribute("user", user);
-                            String roleCode = jsonToken.getString("roleCode");
-                            session.setAttribute("roleCode", roleCode);
-                            String companyNum = jsonToken.getString("companyNum");
-                            session.setAttribute("companyNum", companyNum);
-                            session.setAttribute("token", token);
-                            chain.doFilter(req, response);
-                            return;
-                        } else {
-                            if (req.getHeader("x-requested-with") != null && req.getHeader("x-requested-with").equals("XMLHttpRequest")) {
-                                logger.warn("---session超时,请重新登录---");
-                                res.setHeader("sessionstatus", "timeout");
-                            } else {
-                                res.setStatus(401);
-                            }
-
-                            return;
-                        }
-                    } else {
-                        if (req.getHeader("x-requested-with") != null && req.getHeader("x-requested-with").equals("XMLHttpRequest")) {
-                            logger.warn("---session超时,请重新登录---");
-                            res.setHeader("sessionstatus", "timeout");
-                        } else {
-                            res.setStatus(401);
-                        }
-
-                        return;
-                    }
-                } catch (Exception var21) {
-                    var21.printStackTrace();
-                    throw new ServletException(var21);
-                }
-            }
+            return;
         }
+        LOGGER.info("Token = " + token);
+        if (redisTemplate.hasKey(SESSION_PREFIX_OF_REDIS_KEY + token)){
+            if (isLogin) {
+                redisTemplate.expire(SESSION_PREFIX_OF_REDIS_KEY + token, 604800L, TimeUnit.SECONDS);
+            } else {
+                redisTemplate.expire(SESSION_PREFIX_OF_REDIS_KEY + token, 7200L, TimeUnit.SECONDS);
+            }
 
+            JSONObject jsonToken = JSONObject.fromObject(
+                    (String) valueOperations.get(SESSION_PREFIX_OF_REDIS_KEY + token));
+            UserInfo user = (UserInfo)JSONObject.toBean(jsonToken.getJSONObject("user"), UserInfo.class);
+            session.setAttribute("user", user);
+            session.setAttribute("roleCode", jsonToken.getString("roleCode"));
+            session.setAttribute("companyNum", jsonToken.getString("companyNum"));
+            session.setAttribute("token", token);
+            chain.doFilter(httpServletRequest, httpServletResponse);
+            return;
+        }else {
+            if (httpServletRequest.getHeader("x-requested-with") != null
+                    && httpServletRequest.getHeader("x-requested-with").equals("XMLHttpRequest")) {
+                /*Ajax异步请求*/
+                LOGGER.warn("---session超时,请重新登录---");
+                httpServletResponse.setHeader("sessionstatus", "timeout");
+            } else {
+                httpServletResponse.setStatus(401);
+            }
+
+            return;
+        }
     }
 
-    public void init(FilterConfig config) throws ServletException {
-        this.excludeUrl = HttpProperties.getVal("excludeUrl");
-        if (StringUtils.isNotBlank(this.excludeUrl)) {
-            this.excludeUrlArray = this.excludeUrl.split(",");
-        }
+    @Override
+    public void destroy() {
 
-        this.config = config;
     }
 }

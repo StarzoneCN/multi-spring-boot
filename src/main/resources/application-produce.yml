@@ -11,3 +11,9 @@ server:
 
 logging:
   config: classpath:log4j2-produce.yml
+
+spring:
+  redis:
+    host: 192.168.3.128
+    port: 6379
+    database: 1

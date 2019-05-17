@@ -18,9 +18,6 @@ dubbo:
 spring:
   messages:
     basename: i18n/messages
-
-  profiles:
-    active: @active-profile@
 logging:
   level:
     org:
@@ -30,3 +27,6 @@ logging:
       springframework:
         boot:
           autoconfigure: error
+authFilter:
+  urls:
+    - "/auth/logout"

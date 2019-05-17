@@ -5,7 +5,6 @@ import org.apache.logging.log4j.Logger;
 import redis.clients.jedis.Jedis;
 import redis.clients.jedis.JedisPool;
 import redis.clients.jedis.JedisPoolConfig;
-import redis.clients.jedis.params.SetParams;
 
 public class RedisUtil {
     private final static Logger LOGGER = LogManager.getLogger(RedisUtil.class);
@@ -139,9 +138,9 @@ public class RedisUtil {
                 LOGGER.warn(MSG_WARN_NO_REDIS_RESOURCE);
                 return null;
             }
-            SetParams setParams = new SetParams();
-            setParams.ex(expire);
-            return jedis.set(key, value, setParams);
+            String status = jedis.set(key, value);
+            jedis.expire(key, expire);
+            return status;
         }
     }
 }

@@ -11,6 +11,10 @@ server:
 spring:
   http:
     log-request-details: true
+  redis:
+    host: 192.168.3.128
+    port: 6379
+    database: 1
 
 logging:
   config: classpath:log4j2-dev.yml
