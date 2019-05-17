@@ -24,6 +24,9 @@ spring:
 logging:
   level:
     org:
+      apache:
+        dubbo:
+          common: error
       springframework:
         boot:
           autoconfigure: error

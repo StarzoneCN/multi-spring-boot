@@ -1,13 +1,14 @@
 package com.example.demo.multi.springBoot.util;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import redis.clients.jedis.Jedis;
 import redis.clients.jedis.JedisPool;
 import redis.clients.jedis.JedisPoolConfig;
 import redis.clients.jedis.params.SetParams;
 
 public class RedisUtil {
-    private final static Logger LOGGER = Logger.getLogger(RedisUtil.class);
+    private final static Logger LOGGER = LogManager.getLogger(RedisUtil.class);
     private static final String MSG_ERR_REDIS_POOL_INIT_FAILURE = "Redis-pool初始化失败";
     private static final String MSG_ERR_FAIL_TO_CREATRE_REDIS_CONNECTION = "Redis连接创建失败";
     private static final String MSG_WARN_NO_REDIS_RESOURCE = "无Redis连接资源";

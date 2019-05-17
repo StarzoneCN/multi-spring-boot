@@ -10,7 +10,8 @@ import cn.com.bluemoon.portalClient.util.HttpProperties;
 import com.example.demo.multi.springBoot.util.RedisUtil;
 import com.example.demo.multi.springBoot.util.StringUtils;
 import net.sf.json.JSONObject;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import javax.servlet.*;
 import javax.servlet.http.Cookie;
@@ -22,7 +23,7 @@ import java.io.IOException;
 import static com.example.demo.multi.springBoot.constant.StringConstants.SESSION_PREFIX_OF_REDIS_KEY;
 
 public class AuthFilter implements Filter {
-    private static Logger logger = Logger.getLogger(AuthFilter.class);
+    private static Logger logger = LogManager.getLogger(AuthFilter.class);
     private String excludeUrl;
     private String[] excludeUrlArray;
     private FilterConfig config;

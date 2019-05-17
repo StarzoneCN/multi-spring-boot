@@ -30,7 +30,7 @@ import static com.example.demo.multi.springBoot.constant.StringConstants.*;
 @RequestMapping("auth")
 public class AuthController {
 
-    @Reference
+    @Reference(url = "192.168.240.18:20881")
     private SsoService ssoService;
     @Autowired
     private CustomizedMessageSource messageSource;
