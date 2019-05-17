@@ -156,6 +156,7 @@
     </dependencies>
 
     <profiles>
+        <!--dev-->
         <profile>
             <id>dev</id>
             <activation>
@@ -165,6 +166,8 @@
                 <active-profile>dev</active-profile>
             </properties>
         </profile>
+
+        <!--produce-->
         <profile>
             <id>produce</id>
             <properties>
@@ -172,6 +175,7 @@
             </properties>
         </profile>
     </profiles>
+    
     <build>
         <finalName>helloServer</finalName>
         <plugins>
