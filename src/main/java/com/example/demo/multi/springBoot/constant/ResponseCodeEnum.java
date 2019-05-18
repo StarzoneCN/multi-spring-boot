@@ -9,7 +9,7 @@ import java.util.Optional;
 public enum ResponseCodeEnum {
     SUCCESS(0, "Request is successful"),
     BAD_PARAMS(-1, "Parameter violation"),
-    BAD_PERMISSION(-10001, "Lack of Permissions"),
+    BAD_PERMISSION(-40003, "Lack of Permissions"),
     FAIL_2_EXE(-10001, "Fail to execute request method");
 
     private static final String MSG_FAIL_TO_INSTANCE = "code({0})";

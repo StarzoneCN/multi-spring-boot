@@ -84,13 +84,6 @@
             <version>2.9.8</version>
         </dependency>
 
-        <!--tomcat插件-->
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-tomcat</artifactId>
-            <scope>provided</scope>
-        </dependency>
-
         <!--json-lib-->
         <dependency>
             <groupId>net.sf.json-lib</groupId>
@@ -184,6 +177,14 @@
             <artifactId>lombok</artifactId>
             <version>1.18.8</version>
         </dependency>
+
+        <!--commons-lang: jar包已过时，不建议使用，此处引用是为了兼容portal-client-->
+        <!--建议使用commons-lang3-->
+        <dependency>
+            <groupId>commons-lang</groupId>
+            <artifactId>commons-lang</artifactId>
+            <version>2.6</version>
+        </dependency>
     </dependencies>
 
     <profiles>
@@ -212,6 +213,22 @@
             <properties>
                 <active-profile>produce</active-profile>
             </properties>
+            <dependencies>
+                <!--tomcat插件，打war包需要-->
+                <dependency>
+                    <groupId>org.springframework.boot</groupId>
+                    <artifactId>spring-boot-starter-tomcat</artifactId>
+                    <scope>provided</scope>
+                </dependency>
+            </dependencies>
+            <build>
+                <resources>
+                    <resource>
+                        <directory>src/main/resources</directory>
+                        <filtering>true</filtering>
+                    </resource>
+                </resources>
+            </build>
         </profile>
     </profiles>
 
@@ -233,11 +250,5 @@
                 </configuration>
             </plugin>
         </plugins>
-        <resources>
-            <resource>
-                <directory>src/main/resources</directory>
-                <filtering>true</filtering>
-            </resource>
-        </resources>
     </build>
 </project>
