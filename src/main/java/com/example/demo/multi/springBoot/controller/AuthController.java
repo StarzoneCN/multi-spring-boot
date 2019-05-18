@@ -13,6 +13,8 @@ import com.example.demo.multi.springBoot.util.StringUtils;
 import com.example.demo.multi.springBoot.vo.CommonResponseVo;
 import net.sf.json.JSONObject;
 import org.apache.dubbo.config.annotation.Reference;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -21,14 +23,14 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import java.io.IOException;
-import java.util.HashMap;
-import java.util.Map;
+import java.text.MessageFormat;
 
 import static com.example.demo.multi.springBoot.constant.StringConstants.*;
 
 @RestController
 @RequestMapping("auth")
 public class AuthController {
+    private static final Logger LOGGER = LogManager.getLogger(AuthController.class);
 
     @Reference(url = "192.168.240.18:20881")
     private SsoService ssoService;
@@ -58,7 +60,7 @@ public class AuthController {
         try {
             ImageIO.write(vo.getImage(), "JPEG", response.getOutputStream());
         } catch (IOException e) {
-            e.printStackTrace(); // todo 完善：添加日志
+            LOGGER.error(SYS_EXCEPTION_WITH_COLON + e.getMessage());
         }
     }
 
@@ -85,7 +87,7 @@ public class AuthController {
 
         if (!RedisUtil.exists(RAND_PREFIX_OF_REDIS_KEY + session.getId())) {
             responseVo.setCode(ResponseCodeEnum.BAD_PARAMS);
-            responseVo.setMsg(messageSource.getMessage("bad.verify.code"));
+            responseVo.setMsg(messageSource.getMessage("expired.verify.code"));
             return responseVo;
         }
 
@@ -93,7 +95,7 @@ public class AuthController {
         String randCode = RedisUtil.get(RAND_PREFIX_OF_REDIS_KEY + session.getId());
         if (!loginDto.getRand().equals(randCode)) {
             responseVo.setCode(ResponseCodeEnum.BAD_PARAMS);
-            responseVo.setMsg("验证码错误");
+            responseVo.setMsg(messageSource.getMessage("bad.verify.code"));
             return responseVo;
         }
 
@@ -158,15 +160,14 @@ public class AuthController {
             responseVo.setCode(responseCodeEnum);
             responseVo.setMsg(responseCodeEnum.msg());
         } catch (EnumConstantNotPresentException e) {
-            e.printStackTrace(); // todo 添加日志
+            LOGGER.warn(MessageFormat.format(THE_RESPONESE_CODE_IS_NOT_EXISTS, params.getString(SSO_RESPONSE_CODE_FLAG)), e);
             responseVo.setCode(ResponseCodeEnum.FAIL_2_EXE);
             responseVo.setMsg(params.getString(SSO_RESPONSE_SUCCESS_FLAG));
         } catch (Exception e) {
-            e.printStackTrace(); // todo 添加日志
+            LOGGER.error(SYS_EXCEPTION_WITH_COLON, e);
             responseVo.setCode(ResponseCodeEnum.FAIL_2_EXE);
             responseVo.setMsg(ResponseCodeEnum.FAIL_2_EXE.msg());
         }
-
         return responseVo;
     }
 
@@ -202,7 +203,7 @@ public class AuthController {
                 responseVo.setMsg(param.getString(SSO_RESPONSE_MSG_FLAG));
             }
         } catch (Exception e) {
-            e.printStackTrace(); // todo 日志
+            LOGGER.error(SYS_EXCEPTION_WITH_COLON, e);
             responseVo.setCode(ResponseCodeEnum.FAIL_2_EXE);
             responseVo.setMsg(ResponseCodeEnum.FAIL_2_EXE.msg());
         }
