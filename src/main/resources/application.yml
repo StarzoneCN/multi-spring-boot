@@ -27,6 +27,3 @@ logging:
       springframework:
         boot:
           autoconfigure: error
-authFilter:
-  urls:
-    - "/auth/logout"

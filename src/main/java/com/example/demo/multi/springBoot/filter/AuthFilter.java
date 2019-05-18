@@ -8,6 +8,7 @@ import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.PropertySource;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.data.redis.core.ValueOperations;
 import org.springframework.stereotype.Component;
@@ -25,10 +26,11 @@ import java.util.concurrent.TimeUnit;
 import static com.example.demo.multi.springBoot.constant.StringConstants.SESSION_PREFIX_OF_REDIS_KEY;
 
 @Component
+@PropertySource("classpath:application.properties")
 public class AuthFilter implements Filter {
     private static final Logger LOGGER = LogManager.getLogger(AuthFilter.class);
 
-    @Value("active-profile")
+    @Value("${spring.profiles.active}")
     private String environment;
     @Autowired
     @Qualifier("stringValueOperations")

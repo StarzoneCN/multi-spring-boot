@@ -1,6 +1,6 @@
 # 项目架构详细介绍
-### 1. Redis
-#### 1.1 配置
+## 1. Redis
+### 1.1 配置
 * dev环境：application-dev.yml
   ```yml
   spring:
@@ -18,8 +18,8 @@
       database: 1
   ```
 
-#### 1.2 应用
-* 默认配置：由于RedisTemplate<K,V>是泛型，所以使用redis时，分两种情况
+### 1.2 应用
+由于RedisTemplate<K,V>是泛型，所以使用redis时，分两种情况
   * RedisTemplate<String, String>：在`RedisConfiguration`配置类中，向IOC注入了`ValueOperations`、`ZSetOperations`、`SetOperations`、`ListOperations`等redis操作封装类（beanName为`string**Operations`）
     ```java
     /* 按beanName引入, beanName为：string**Operations */
@@ -39,3 +39,13 @@
         return template;
     }
     ```
+
+## 3. Filter
+* 相关类：`AuthFilter`
+### 3.1 过滤地址
+```java
+@WebFilter(urlPatterns = {"需要执行过滤器的路径1", "路径2"})
+public class TokenFilter implements Filter {
+
+}
+```

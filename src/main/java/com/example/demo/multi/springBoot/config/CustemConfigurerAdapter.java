@@ -4,19 +4,22 @@ import com.example.demo.multi.springBoot.filter.AuthFilter;
 import com.example.demo.multi.springBoot.filter.TokenFilter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.PropertySource;
 
 import java.util.ArrayList;
 import java.util.List;
 
 @Configuration
+@PropertySource("classpath:application.properties")
 public class CustemConfigurerAdapter {
     @Autowired
     private AuthFilter authFilter;
-    @Value("authFilter.urls")
-    private List<String> filteUrls;
+    @Value("${auth.filter.urls}")
+    private List<String> urls;
 
     @Bean
     public FilterRegistrationBean authFilterRegistrationBean() {
@@ -24,7 +27,7 @@ public class CustemConfigurerAdapter {
         registrationBean.setName("authFilter");
         registrationBean.setFilter(authFilter);
         registrationBean.setOrder(1);
-        registrationBean.setUrlPatterns(filteUrls);
+        registrationBean.setUrlPatterns(urls);
         return registrationBean;
     }
 }
