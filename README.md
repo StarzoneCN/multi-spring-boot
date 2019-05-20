@@ -57,8 +57,10 @@ public class TokenFilter implements Filter {
 ## 4. Mybatis/plus
 更多关于MP的知识，请移步[Mybatis-Plus知识分享][]或[Mybatis-Plus官方文档][]
 ### 4.1 每类文件的存放位置：
-* `mapper.java`/`mapper.xml`: `主包路径.dao.mapper`
-* `**Dao.java`: 数据库操作service层，存放位置为`主包路径.dao`
+项目中使用`Dao`表示数据库层，所以数据库相关的类一般放在`dao`包下，如果项目中包含多个模块（module），且数据库表也有模块的概念，则表对应的各种类型文件放在`dao.moduleName`子包里：
+* `mapper.java`/`mapper.xml`: `主包路径.dao[.moduleName].mapper`
+* `**Dao.java`: 数据库操作service层，存放位置为`主包路径.dao[.moduleName]`
+* table实体类：`主包路径.dao[.moduleName].entity`
 
 ### 4.2 删除
 > **重要**：如无特殊情况，所有表只做逻辑删除

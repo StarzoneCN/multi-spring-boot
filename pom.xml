@@ -218,6 +218,27 @@
                     <artifactId>spring-boot-devtools</artifactId>
                     <optional>true</optional> <!-- 防止将devtools依赖传递到其他模块中 -->
                 </dependency>
+
+                <!--mybatis-plus代码生成相关-->
+                <dependency>
+                    <groupId>com.baomidou</groupId>
+                    <artifactId>mybatis-plus-generator</artifactId>
+                    <version>3.1.1</version>
+                    <scope>test</scope>
+                </dependency>
+                <dependency>
+                    <groupId>org.apache.velocity</groupId>
+                    <artifactId>velocity-engine-core</artifactId>
+                    <version>2.1</version>
+                    <scope>test</scope>
+                </dependency>
+                <!-- 模板引擎，需要指定 mpg.setTemplateEngine(new FreemarkerTemplateEngine()); -->
+                <dependency>
+                    <groupId>org.freemarker</groupId>
+                    <artifactId>freemarker</artifactId>
+                    <version>2.3.28</version>
+                    <scope>test</scope>
+                </dependency>
             </dependencies>
         </profile>
 
