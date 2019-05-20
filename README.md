@@ -49,3 +49,46 @@ public class TokenFilter implements Filter {
 
 }
 ```
+
+
+## 4. Mybatis/plus
+更多关于MP的知识，请移步[Mybatis-Plus知识分享][]或[Mybatis-Plus官方文档][]
+### 4.1 每类文件的存放位置：
+* `mapper.java`/`mapper.xml`: `主包路径.dao.mapper`
+* `**Dao.java`: 数据库操作service层，存放位置为`主包路径.dao`
+
+### 4.2 删除
+> **重要**：如无特殊情况，所有表只做逻辑删除
+
+### 4.3 枚举注入
+参考文档：[通用枚举][]
+枚举类位置：
+```yaml
+mybatis-plus:
+    # 支持统配符 * 或者 ; 分割
+    typeEnumsPackage: 主包路径.constant.Enum
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+[Mybatis-Plus知识分享]: http://confluence.admin.bluemoon.com.cn/display/SCM/Mybatis-plus
+[Mybatis-Plus官方文档]: https://baomidou.gitee.io/mybatis-plus-doc/#/quick-start
+[通用枚举]: https://mp.baomidou.com/guide/enum.html#通用枚举

@@ -1,4 +1,4 @@
-package com.example.demo.multi.springBoot.filter;
+package com.example.demo.multi.springBoot.config.filter;
 
 import cn.com.bluemoon.common.user.po.UserInfo;
 import com.example.demo.multi.springBoot.util.StringUtils;

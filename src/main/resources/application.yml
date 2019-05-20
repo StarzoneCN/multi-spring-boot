@@ -27,3 +27,15 @@ logging:
       springframework:
         boot:
           autoconfigure: error
+mybatis-plus:
+  mapper-locations: com.example.demo.multi.springBoot.dao.**.*Mapper.xml
+  type-aliases-package: com.example.demo.multi.springBoot.dao.entity
+  configuration:
+    map-underscore-to-camel-case: true
+    auto-mapping-unknown-column-behavior: warning
+    call-setters-on-nulls: true
+  global-config:
+    db-config:
+      logic-delete-value: true
+      logic-not-delete-value: false
+  type-enums-package: com.example.demo.multi.springBoot.constant.Enum

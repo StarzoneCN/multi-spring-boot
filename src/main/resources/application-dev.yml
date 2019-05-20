@@ -15,6 +15,18 @@ spring:
     host: 192.168.3.128
     port: 6379
     database: 1
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://localhost:3306/mybatisPlus?seUnicode=true&characterEncoding=UTF-8&serverTimezone=UTC
+    username: root
+    password: 3
 
 logging:
   config: classpath:log4j2-dev.yml
+
+mybatis-plus:
+  delay-seconds: 10
+  sleep-seconds: 10
+
+
+

@@ -1,6 +1,6 @@
 package com.example.demo.multi.springBoot.config;
 
-import com.example.demo.multi.springBoot.filter.AuthFilter;
+import com.example.demo.multi.springBoot.config.filter.AuthFilter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.web.servlet.FilterRegistrationBean;

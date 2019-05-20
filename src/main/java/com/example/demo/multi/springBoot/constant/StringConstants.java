@@ -18,4 +18,6 @@ public class StringConstants {
     /*系统异常*/
     public static final String SYS_EXCEPTION = "系统异常";
     public static final String SYS_EXCEPTION_WITH_COLON = "系统异常：";
+
+    public static final String MYBATIS_MAPPER_LOCATION = "com.example.demo.multi.springBoot.dao.**.*Mapper.xml";
 }
