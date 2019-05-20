@@ -30,8 +30,8 @@ public class MybatisPlusCodeGenerator {
     private static final String fieldPrefix = "is"; // 字段前缀
     private static final String logicDeleteField = "del_flag";
     private static final String author = "Li Hongxing";
-    private static final String sourcesDir = "/src/java/java";
-    private static final String classpath = "/src/java/resources";
+    private static final String sourcesDir = "/src/main/java";
+    private static final String classpath = "/src/main/resources";
     private static final String serviceName = "%sDao";
     private static final String serviceImplName = "%sDaoImpl";
 
@@ -40,15 +40,19 @@ public class MybatisPlusCodeGenerator {
     private static final String databaseUsername = "root";
     private static final String databasePassword = "3";
 
+    /**
+     * 生成的entity类代码不是太整齐，建议生成entity类后，手动格式化一下
+     */
     private static final String entityPackageName = "entity";
     private static final String servicePackageName = "dao";
     private static final String serviceImplPackageName = "dao.impl";
     private static final String mapperPackageName = "mapper";
     private static final String xmlPackageName = "mapper";
-    private static final String controllerPackageName = "controller";
+    /*默认是controller，会生成controller文件夹，因为项目中不需要mp生成controller，所以此处设置成“.”*/
+    private static final String controllerPackageName = ".";
 
-    private static final String mainPackagePath = "com.example.demo.multi.springBoot.dao";
-    private static final String mainPackageDir = "com/example/demo/multi/springBoot/dao";
+    private static final String mainPackagePath = "com.example.demo.multi.springBoot.db";
+    private static final String mainPackageDir = "com/example/demo/multi/springBoot/db";
 
     @Test
     public void generate() {
@@ -134,7 +138,7 @@ public class MybatisPlusCodeGenerator {
             public String outputFile(TableInfo tableInfo) {
                 String xmlFileName = tableInfo.getEntityName() + "Mapper" + StringPool.DOT_XML;
                 StringBuffer sb = new StringBuffer();
-                sb.append(projectPath).append(sourcesDir).append("/").append(mainPackageDir);
+                sb.append(projectPath).append(sourcesDir).append("/").append(mainPackageDir).append("/");
                 if (StringUtils.isNotBlank(pc.getModuleName())){
                     sb.append(pc.getModuleName()).append("/");
                 }
