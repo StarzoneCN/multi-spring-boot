@@ -14,10 +14,10 @@ dubbo:
   monitor:
     protocol: registry
 
-
 spring:
   messages:
     basename: i18n/messages
+
 logging:
   level:
     org:
@@ -27,6 +27,7 @@ logging:
       springframework:
         boot:
           autoconfigure: error
+
 mybatis-plus:
   mapper-locations: com.example.demo.multi.springBoot.dao.**.*Mapper.xml
   type-aliases-package: com.example.demo.multi.springBoot.dao.entity
