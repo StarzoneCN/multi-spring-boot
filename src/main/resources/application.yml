@@ -29,7 +29,6 @@ logging:
           autoconfigure: error
 
 mybatis-plus:
-  mapper-locations: com.example.demo.multi.springBoot.dao.**.*Mapper.xml
   type-aliases-package: com.example.demo.multi.springBoot.dao.entity
   configuration:
     map-underscore-to-camel-case: true

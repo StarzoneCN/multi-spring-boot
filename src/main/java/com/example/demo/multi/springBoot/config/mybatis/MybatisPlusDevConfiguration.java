@@ -33,17 +33,17 @@ public class MybatisPlusDevConfiguration {
     /**
      * 延迟加载时间
      */
-    @Value("mybatis-plus.delay-seconds")
+    @Value("${mybatis-plus.delay-seconds}")
     private int delaySeconds;
     /**
      * 刷新间隔时间
      */
-    @Value("mybatis-plus.sleep-seconds")
+    @Value("${mybatis-plus.sleep-seconds}")
     private int sleepSeconds;
     /**
      * 刷新间隔时间
      */
-    @Value("mybatis-plus.mapper-locations")
+    @Value("${mybatis-plus.mapper-locations}")
     private String mapperLocations;
 
     /**
