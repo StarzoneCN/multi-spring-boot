@@ -1,4 +1,4 @@
-package com.example.demo.multi.springBoot.config;
+package com.example.demo.multi.springBoot.config.mybatis;
 
 import com.baomidou.mybatisplus.extension.spring.MybatisMapperRefresh;
 import org.apache.ibatis.session.SqlSessionFactory;
@@ -10,6 +10,10 @@ import org.springframework.context.annotation.Primary;
 import org.springframework.context.annotation.Profile;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
+import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
+import org.springframework.core.io.support.ResourcePatternResolver;
+
+import java.io.IOException;
 
 import static com.example.demo.multi.springBoot.constant.StringConstants.MYBATIS_MAPPER_LOCATION;
 
@@ -36,6 +40,11 @@ public class MybatisPlusDevConfiguration {
      */
     @Value("mybatis-plus.sleep-seconds")
     private int sleepSeconds;
+    /**
+     * 刷新间隔时间
+     */
+    @Value("mybatis-plus.mapper-locations")
+    private String mapperLocations;
 
     /**
      * 支持mapper.xml的热加载，只应用于开发环境
@@ -48,5 +57,16 @@ public class MybatisPlusDevConfiguration {
         MybatisMapperRefresh mybatisMapperRefresh = new MybatisMapperRefresh(resources,
                 sqlSessionFactory, true);
         return mybatisMapperRefresh;
+    }
+
+    private Resource[] getResources(){
+        ResourcePatternResolver resolver = new PathMatchingResourcePatternResolver();
+        try {
+            return resolver.getResources(mapperLocations);
+        } catch (IOException e) {
+            System.out.println("mapperLocations配置有误");
+            e.printStackTrace();
+        }
+        return null;
     }
 }

@@ -25,9 +25,5 @@ spring:
 logging:
   config: classpath:log4j2-dev.yml
 
-mybatis-plus:
-  delay-seconds: 10
-  sleep-seconds: 10
-
 
 

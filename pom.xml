@@ -179,7 +179,7 @@
         </dependency>
 
         <!--commons-lang: jar包已过时，不建议使用，此处引用是为了兼容portal-client-->
-        <!--建议使用commons-lang3-->
+        <!--建议使用commons-lang3中的工具类-->
         <dependency>
             <groupId>commons-lang</groupId>
             <artifactId>commons-lang</artifactId>
