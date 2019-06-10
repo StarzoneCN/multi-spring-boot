@@ -1,18 +1,7 @@
 package com.example.demo.multi.springBoot;
 
-import com.example.demo.multi.springBoot.constant.ResponseCodeEnum;
-import com.example.demo.multi.springBoot.service.TestService;
 import org.junit.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Component;
-
-import java.beans.Introspector;
-import java.math.BigDecimal;
-import java.math.RoundingMode;
-import java.text.DecimalFormat;
-import java.util.*;
-import java.util.stream.Collectors;
 
 /**
  * @author: LiHongxing
