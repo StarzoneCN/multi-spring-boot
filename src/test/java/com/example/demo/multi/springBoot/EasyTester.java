@@ -1,10 +1,11 @@
 package com.example.demo.multi.springBoot;
 
+import lombok.Data;
 import org.junit.Test;
 
-import java.math.RoundingMode;
-import java.text.DecimalFormat;
-import java.util.ArrayList;
+import java.text.ParseException;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * @author: LiHongxing
@@ -12,12 +13,35 @@ import java.util.ArrayList;
  * @date: Create in 2018/6/8 14:16
  * @modefied:
  */
+@Data
 public class EasyTester {
 
+    private char a = '\u0ffa';
+    private int b;
+
     @Test
-    public void test(){
-        String s = null;
-        System.out.println(s);
+    public void test() {
+        String reg = "\\d(\\d)(?<id>\\d)";
+        String str = "123abc456";
+
+        Pattern pattern = Pattern.compile(reg);
+        Matcher matcher = pattern.matcher(str);
+
+
+        System.out.println("matcher matches = "+matcher.find());
+        System.out.println("no parameter = "+matcher.group());
+        System.out.println("number parameter = "+matcher.group(1));
+        System.out.println("name parameter = "+matcher.group("id"));
+    }
+
+    @Test
+    public void t2(){
+        Pattern TAX_CODE_PATTERN = Pattern.compile("[\\d]-(\\d)");
+        String str2 = "1-2%";
+        Matcher matcher2 = TAX_CODE_PATTERN.matcher(str2);
+        System.out.println(TAX_CODE_PATTERN.toString());
+        System.out.println("matcher matches = "+matcher2.find());
+        System.out.println(matcher2.group(1));
     }
 
     @Test
@@ -48,5 +72,11 @@ public class EasyTester {
         for (int j=0; j<i; j++) {
             mockId();
         }
+    }
+
+    public static void main(String[] args) {
+        String s3 = "1" + new String("1");
+        String s5 = s3.intern();
+        System.out.println(s5 == s3);
     }
 }
