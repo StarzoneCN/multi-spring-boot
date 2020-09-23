@@ -32,4 +32,6 @@ public interface UserService extends IService<User> {
     PartOfUser selectPartOfUser(Integer id);
 
     Map<String, Object> selectUserMapById(Integer id);
+
+    List<User> selectAll();
 }

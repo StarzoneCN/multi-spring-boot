@@ -2,6 +2,8 @@ package com.example.demo.multi.springBoot;
 
 import org.junit.Test;
 
+import java.util.concurrent.atomic.AtomicInteger;
+
 /**
  * @author: LiHongxing
  * @email: lihongxing@bluemoon.com.cn
@@ -12,6 +14,6 @@ public class EasyTester {
 
     @Test
     public void test(){
-
+        System.out.println(new AtomicInteger().getAndIncrement());
     }
 }

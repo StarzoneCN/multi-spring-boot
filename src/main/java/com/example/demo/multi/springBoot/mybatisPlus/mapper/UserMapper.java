@@ -6,6 +6,7 @@ import com.example.demo.multi.springBoot.mybatisPlus.entity.User;
 import org.apache.ibatis.annotations.Flush;
 import org.apache.ibatis.annotations.Mapper;
 
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -23,4 +24,6 @@ public interface UserMapper extends BaseMapper<User> {
     PartOfUser selectPartOfUser(Integer id);
 
     Map<String, Object> selectUserMapById(Integer id);
+
+    List<User> selectAll();
 }

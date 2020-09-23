@@ -1,12 +1,11 @@
 CREATE TABLE `user` (
-  `id` INT(10) UNSIGNED NOT NULL AUTO_INCREMENT,
-  `name` VARCHAR(20) NULL DEFAULT NULL,
-  `age` TINYINT(3) UNSIGNED NULL DEFAULT NULL,
-  `email` VARCHAR(50) NULL DEFAULT NULL,
-  `del_flag` BIT(1) NULL DEFAULT b'0',
+  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `name` varchar(20) DEFAULT NULL,
+  `age` tinyint(3) unsigned DEFAULT NULL,
+  `email` varchar(50) DEFAULT NULL,
+  `mobile` varchar(10) DEFAULT NULL,
+  `create_time` timestamp NULL DEFAULT NULL,
+  `operate_time` timestamp NULL DEFAULT NULL,
+  `del_flag` bit(1) DEFAULT b'0',
   PRIMARY KEY (`id`)
-)
-  COLLATE='utf8mb4_general_ci'
-  ENGINE=InnoDB
-  AUTO_INCREMENT=6
-;
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4;

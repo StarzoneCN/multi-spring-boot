@@ -78,4 +78,9 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
     public Map<String, Object> selectUserMapById(Integer id){
         return userMapper.selectUserMapById(id);
     }
+
+    @Override
+    public List<User> selectAll(){
+        return userMapper.selectAll();
+    }
 }
