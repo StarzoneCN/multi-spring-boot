@@ -3,7 +3,11 @@ package com.example.demo.multi.springBoot;
 import lombok.Data;
 import org.junit.Test;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
 import java.text.ParseException;
+import java.util.Scanner;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -20,18 +24,9 @@ public class EasyTester {
     private int b;
 
     @Test
-    public void test() {
-        String reg = "\\d(\\d)(?<id>\\d)";
-        String str = "123abc456";
-
-        Pattern pattern = Pattern.compile(reg);
-        Matcher matcher = pattern.matcher(str);
-
-
-        System.out.println("matcher matches = "+matcher.find());
-        System.out.println("no parameter = "+matcher.group());
-        System.out.println("number parameter = "+matcher.group(1));
-        System.out.println("name parameter = "+matcher.group("id"));
+    public void test() throws IOException {
+        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+        System.out.println(br.readLine());
     }
 
     @Test
@@ -74,9 +69,7 @@ public class EasyTester {
         }
     }
 
-    public static void main(String[] args) {
-        String s3 = "1" + new String("1");
-        String s5 = s3.intern();
-        System.out.println(s5 == s3);
+    public static void main(String[] args) throws IOException {
+        System.out.println(Long.parseLong("432143.314"));
     }
 }

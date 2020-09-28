@@ -1,5 +1,6 @@
 package com.example.demo.multi.springBoot.example.netty.discard;
 
+import com.example.demo.multi.springBoot.example.netty.handler.EchoServerHandler;
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.channel.ChannelFuture;
 import io.netty.channel.ChannelInitializer;
@@ -31,7 +32,7 @@ public class NettyServer {
                     .childHandler(new ChannelInitializer<SocketChannel>() {
                         @Override
                         public void initChannel(SocketChannel ch) throws Exception {
-                            ch.pipeline().addLast(new ServerHandler());
+                            ch.pipeline().addLast(new EchoServerHandler());
                         }
                     })
                     .option(ChannelOption.SO_BACKLOG, 128)
