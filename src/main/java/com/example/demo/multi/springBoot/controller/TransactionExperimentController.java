@@ -30,6 +30,12 @@ public class TransactionExperimentController {
         return "over";
     }
 
+    @GetMapping("m2")
+    public String m2(){
+        transactionExperimentService.methodTwo();
+        return "over";
+    }
+
     @GetMapping("user/{id}")
     public User userById(@PathVariable Integer id){
         return transactionExperimentService.getOneById(id);

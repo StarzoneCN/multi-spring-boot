@@ -31,6 +31,7 @@ public class User extends Model<User> implements Serializable {
 
     private String name;
 
+    @TableField(strategy = FieldStrategy.IGNORED)
     private Integer age;
 
     private String email;

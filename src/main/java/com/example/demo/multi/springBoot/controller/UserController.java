@@ -126,7 +126,7 @@ public class UserController {
     @PostMapping("update")
     public CommonResponse updateById(User user){
         CommonResponse commonResponse = new CommonResponse();
-        commonResponse.setSuccess(userService.update(user, new UpdateWrapper<>(user)));
+        commonResponse.setSuccess(userService.update(user, new UpdateWrapper<User>().eq("id", user.getId())));
         return commonResponse;
     }
 

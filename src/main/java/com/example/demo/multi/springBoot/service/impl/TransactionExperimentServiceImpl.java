@@ -51,7 +51,7 @@ public class TransactionExperimentServiceImpl implements TransactionExperimentSe
     }
 
     @Override
-    @Transactional(isolation = Isolation.REPEATABLE_READ)
+//    @Transactional(isolation = Isolation.REPEATABLE_READ)
     public void secondUpdateOne(){
         try {
             Thread.sleep(4 * 1000);
@@ -70,18 +70,44 @@ public class TransactionExperimentServiceImpl implements TransactionExperimentSe
     }
 
     @Override
-    @Transactional(isolation = Isolation.READ_COMMITTED)
+    @Transactional(isolation = Isolation.REPEATABLE_READ)
     public void methodOne(){
         System.out.println("methodOne：" + TransactionSynchronizationManager.getCurrentTransactionName());
-        User u = new User().setName("methodOne").setAge(1);
-        userService.save(u);
+        System.out.println(Thread.currentThread().getName());
+        User u = userService.getById(225);
+        System.out.println(Thread.currentThread().getName() + "-----------------1");
+        u.setName("m1");
+        userService.updateById(u);
+
+        u.setId(226);
+        userService.updateById(u);
+        System.out.println(Thread.currentThread().getName() + "-----------------2");
+        try {
+            Thread.sleep(15_000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        u.setId(3);
+        userService.updateById(u);
+        System.out.println(Thread.currentThread().getName() + "-----------------3");
     }
 
     @Override
-    @Transactional
+    @Transactional(isolation = Isolation.REPEATABLE_READ)
     public void methodTwo(){
-        User u = new User().setName("methodTwo").setAge(1);
-        userService.save(u);
+        System.out.println("m2----" + System.currentTimeMillis());
+        User u = userService.getById(3);
+        u.setName("m2");
+        System.out.println(Thread.currentThread().getName() + "-----------------A");
+        userService.updateById(u);
+        try {
+            Thread.sleep(15_000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        u.setId(225);
+        System.out.println(Thread.currentThread().getName() + "-----------------B");
+        userService.updateById(u);
     }
 
     @Transactional(propagation = NOT_SUPPORTED)
