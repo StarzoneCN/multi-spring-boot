@@ -1,6 +1,8 @@
 package com.example.demo.multi.springBoot;
 
 import lombok.Data;
+import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import java.io.BufferedReader;
@@ -23,13 +25,18 @@ public class EasyTester {
     private char a = '\u0ffa';
     private int b;
 
-    @Test
-    public void test() throws IOException {
-        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
-        System.out.println(br.readLine());
+    @Before
+    public void before(){
+        System.out.println("before ....");
     }
 
     @Test
+    public void test()  {
+        System.out.println("running in test method ...");
+    }
+
+    @Test
+    @Ignore
     public void t2(){
         Pattern TAX_CODE_PATTERN = Pattern.compile("[\\d]-(\\d)");
         String str2 = "1-2%";
@@ -40,6 +47,7 @@ public class EasyTester {
     }
 
     @Test
+    @Ignore
     public void mockId(){
         String region = "420621";
         String year = "1992";
@@ -62,6 +70,7 @@ public class EasyTester {
     }
 
     @Test
+    @Ignore
     public void bitchMockId(){
         int i = 10;
         for (int j=0; j<i; j++) {
@@ -70,6 +79,9 @@ public class EasyTester {
     }
 
     public static void main(String[] args) throws IOException {
-        System.out.println(Long.parseLong("432143.314"));
+        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+        System.out.println(br.readLine());
+
+        System.out.println(System.in.read());
     }
 }

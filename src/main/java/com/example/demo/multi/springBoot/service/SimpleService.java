@@ -10,5 +10,5 @@ public interface SimpleService {
 
     void print();
 
-    void async(String msg);
+    String someMessage();
 }

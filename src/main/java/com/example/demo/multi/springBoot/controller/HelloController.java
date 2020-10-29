@@ -1,7 +1,7 @@
 package com.example.demo.multi.springBoot.controller;
 
+import com.example.demo.multi.springBoot.service.SimpleService;
 import com.example.demo.multi.springBoot.service.impl.SimpleServiceImpl;
-import com.example.demo.multi.springBoot.service.impl.SimpleServiceImpl2;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -16,9 +16,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("hello")
 public class HelloController {
     @Autowired
-    private SimpleServiceImpl simpleService;
-    @Autowired
-    private SimpleServiceImpl2 simpleService2;
+    private SimpleService simpleService;
 
    @RequestMapping
     public String index() {

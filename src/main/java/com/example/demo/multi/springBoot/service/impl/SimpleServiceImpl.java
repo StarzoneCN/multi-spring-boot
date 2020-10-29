@@ -1,6 +1,8 @@
 package com.example.demo.multi.springBoot.service.impl;
 
+import com.example.demo.multi.springBoot.service.LoopInjectService;
 import com.example.demo.multi.springBoot.service.SimpleService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
 
@@ -12,24 +14,17 @@ import org.springframework.stereotype.Component;
  */
 @Component
 public class SimpleServiceImpl implements SimpleService {
+    @Autowired
+    private LoopInjectService loopInjectService;
+
     @Override
     public void print() {
+        loopInjectService.doPrint();
         System.out.println("SimpleServiceImpl - 打印了");
-        this.async("1");
-        this.async("2");
     }
 
     @Override
-    @Async
-    public void async(String msg){
-        int i = 6;
-        while (i-- >= 1){
-            System.out.println(msg);
-            try {
-                Thread.sleep(1000);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-        }
+    public String someMessage(){
+        return "message";
     }
 }
