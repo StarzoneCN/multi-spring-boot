@@ -10,7 +10,7 @@ import org.junit.runners.Suite;
  * @createTime: 2020/10/29 11:02:49
  */
 @RunWith(Suite.class)
-@Suite.SuiteClasses({EasyTester.class, EasyTester2.class, TestParameterized.class})
+@Suite.SuiteClasses({EasyTester.class, EasyTester2.class, TestParameterized.class, TestRule.class})
 public class TestSuite {
 
 }
