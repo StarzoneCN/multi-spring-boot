@@ -1,6 +1,7 @@
 package com.example.demo.multi.springBoot;
 
 import org.junit.*;
+import org.junit.experimental.categories.Category;
 import org.junit.rules.ErrorCollector;
 import org.junit.rules.ExternalResource;
 
@@ -9,6 +10,7 @@ import org.junit.rules.ExternalResource;
  * @email: lihongxing@bluemoon.com.cn
  * @createTime: 2020/10/29 12:04:02
  */
+@Category({TestRule.class})
 public class TestRule {
     int a = 0;
 
