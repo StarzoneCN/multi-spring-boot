@@ -11,4 +11,6 @@ public interface SimpleService {
     void print();
 
     String someMessage();
+
+    String timeString();
 }

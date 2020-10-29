@@ -6,6 +6,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
 
+import java.time.LocalDateTime;
+
 /**
  * @author: Li Hongxing
  * @email: lihongxing@bluemoon.com.cn
@@ -26,5 +28,10 @@ public class SimpleServiceImpl implements SimpleService {
     @Override
     public String someMessage(){
         return "message";
+    }
+
+    @Override
+    public String timeString(){
+        return LocalDateTime.now().toString();
     }
 }
