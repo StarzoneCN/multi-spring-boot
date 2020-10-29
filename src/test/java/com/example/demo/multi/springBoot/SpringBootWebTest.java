@@ -14,6 +14,7 @@ import org.springframework.boot.web.server.LocalServerPort;
 import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.junit4.SpringRunner;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.BDDMockito.given;
 
 /**
@@ -44,6 +45,7 @@ public class SpringBootWebTest {
         ResponseEntity<String> responseEntity = this.restTemplate.getForEntity(
                 "/nowTimeString", String.class);
         System.out.println("responseEntity：" + JSONObject.toJSONString(responseEntity));
+        assertThat(responseEntity.getBody()).isEqualTo("long long ago ...");
         System.out.println("this's port is " + port);
     }
 }
