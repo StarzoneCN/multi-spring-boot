@@ -2,7 +2,6 @@ package com.example.demo.multi.springBoot;
 
 import com.alibaba.fastjson.JSONObject;
 import com.example.demo.multi.springBoot.service.SimpleService;
-import com.example.demo.multi.springBoot.service.impl.SimpleServiceImpl;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;

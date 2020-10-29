@@ -20,7 +20,7 @@ public class HelloController {
 
    @RequestMapping
     public String index() {
-       simpleService.print();
+        simpleService.print();
         return "Let's go ! Conquer the world from here!";
     }
 }
