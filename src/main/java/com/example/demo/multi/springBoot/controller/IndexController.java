@@ -28,7 +28,8 @@ public class IndexController {
     }
 
     @GetMapping("nowTimeString")
-    public String nowTimeString(){
+    public String nowTimeString() {
+        System.out.println(System.currentTimeMillis());
         return simpleService.timeString();
     }
 }
