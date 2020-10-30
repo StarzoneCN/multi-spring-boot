@@ -1,6 +1,7 @@
 package com.example.demo.multi.springBoot.controller;
 
 
+import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
@@ -10,6 +11,7 @@ import com.example.demo.multi.springBoot.mybatisPlus.vo.CommonResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import java.security.Principal;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
@@ -33,7 +35,8 @@ public class UserController {
     private UserService userService;
 
     @GetMapping("/{id}")
-    public CommonResponse<User> getById(@PathVariable Integer id){
+    public CommonResponse<User> getById(@PathVariable Integer id, Principal principal){
+        System.out.println(JSONObject.toJSONString(principal));
         CommonResponse<User> commonResponse = new CommonResponse<>();
         User user = userService.getById(id);
         if (user != null){
