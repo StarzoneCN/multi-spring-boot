@@ -7,6 +7,7 @@ import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
+import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.security.test.context.support.WithUserDetails;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
@@ -42,8 +43,22 @@ public class SpringSecurityTest {
     }
 
     @Test
-    @WithUserDetails(value = "user")
+    @WithUserDetails
     public void testQ1() throws Exception {
+        Map<String, Object> map = new HashMap<>();
+        map.put("param1", "valueaa");
+
+        MvcResult result = mockMvc.perform(MockMvcRequestBuilders.get("/user/6")
+                .contentType(MediaType.APPLICATION_JSON_UTF8).content(JSONObject.toJSONString(map)))
+                .andExpect(status().is(200))// 模拟向testRest发送get请求
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8))// 预期返回值的媒体类型text/plain;charset=UTF-8
+                .andReturn();// 返回执行请求的结果
+        System.out.println(result.getResponse().getContentAsString());
+    }
+
+    @Test
+    @WithMockUser(value = "admin")
+    public void testMockUser() throws Exception {
         Map<String, Object> map = new HashMap<>();
         map.put("param1", "valueaa");
 
