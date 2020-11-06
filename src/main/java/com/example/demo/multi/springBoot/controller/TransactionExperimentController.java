@@ -3,12 +3,10 @@ package com.example.demo.multi.springBoot.controller;
 import com.example.demo.multi.springBoot.mybatisPlus.entity.User;
 import com.example.demo.multi.springBoot.service.TransactionExperimentService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 /**
  * spring事务测试
@@ -57,5 +55,16 @@ public class TransactionExperimentController {
     public String secondUpdate(){
         transactionExperimentService.secondUpdateOne();
         return "over";
+    }
+
+    @GetMapping("getByName/{name}")
+    public List<User> getByName(@PathVariable String name){
+        return transactionExperimentService.getByName(name);
+    }
+
+    @PatchMapping("updateById")
+    public String updateById(@RequestBody User user){
+        transactionExperimentService.updateById(user);
+        return "success";
     }
 }

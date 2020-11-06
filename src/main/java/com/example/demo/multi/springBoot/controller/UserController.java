@@ -116,7 +116,7 @@ public class UserController {
     }
 
     @PostMapping("new")
-    public CommonResponse newUser(User user){
+    public CommonResponse newUser(@RequestBody User user){
         CommonResponse commonResponse = new CommonResponse();
         commonResponse.setSuccess(userService.save(user));
         commonResponse.setData(user.getId());

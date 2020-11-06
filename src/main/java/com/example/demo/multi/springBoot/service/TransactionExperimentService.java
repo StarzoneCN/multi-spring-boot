@@ -4,6 +4,8 @@ import com.example.demo.multi.springBoot.mybatisPlus.entity.User;
 import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
+
 /**
  * @creator: LiHongxing
  * @email: lihongxing@bluemoon.com.cn
@@ -24,4 +26,9 @@ public interface TransactionExperimentService {
     User getOneById(int id);
 
     void testRepeatedlyRead();
+
+    @Transactional
+    List<User> getByName(String name);
+
+    void  updateById(User user);
 }

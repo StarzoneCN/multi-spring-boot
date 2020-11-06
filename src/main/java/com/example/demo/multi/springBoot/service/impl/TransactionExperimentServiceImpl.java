@@ -32,7 +32,7 @@ public class TransactionExperimentServiceImpl implements TransactionExperimentSe
     private SqlSessionFactory sqlSessionFactory;
 
     @Override
-    @Transactional(isolation = Isolation.REPEATABLE_READ)
+    @Transactional
     public void firstUpdateOne(){
         QueryWrapper<User> qw = new QueryWrapper<User>().eq("name", "tom");
         try {
@@ -51,7 +51,7 @@ public class TransactionExperimentServiceImpl implements TransactionExperimentSe
     }
 
     @Override
-//    @Transactional(isolation = Isolation.REPEATABLE_READ)
+   @Transactional
     public void secondUpdateOne(){
         try {
             Thread.sleep(4 * 1000);
@@ -118,9 +118,18 @@ public class TransactionExperimentServiceImpl implements TransactionExperimentSe
     }
 
     @Override
-    @Transactional(isolation = Isolation.READ_UNCOMMITTED)
+    @Transactional(isolation = Isolation.SERIALIZABLE)
     public User getOneById(int id){
-        return userService.getById(id);
+        System.out.println("进入方法getOneById-------------------------------");
+        User user = userService.getById(id);
+        try {
+            System.out.println("getOneById阻塞开始-------------------------------");
+            Thread.sleep(3 * 1000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        System.out.println("getOneById阻塞结束-------------------------------");
+        return user;
     }
 
 
@@ -143,5 +152,33 @@ public class TransactionExperimentServiceImpl implements TransactionExperimentSe
         users = sqlSession.selectList("com.example.demo.multi.springBoot.mybatisPlus.mapper.UserMapper.selectAll");
 //        users = userService.selectAll();
         users.forEach(u -> System.out.println(u.getName() + "---------------------------"));
+    }
+
+    @Transactional(isolation = Isolation.SERIALIZABLE)
+    @Override
+    public List<User> getByName(String name){
+        System.out.println("进入方法getByName---------------------------");
+        QueryWrapper<User> qw = new QueryWrapper<>();
+        qw.eq("name", name);
+        List<User> users = userService.list(qw);
+        try {
+            System.out.println("阻塞2s---------------------------------");
+            Thread.sleep(2_000);
+            System.out.println("阻塞结束---------------------------------");
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        return users;
+    }
+
+    @Override
+    @Transactional(isolation = Isolation.SERIALIZABLE)
+    public void  updateById(User user){
+        System.out.println("进入方法updateById---------------------------------");
+        if (user.getId() == null || user.getId() < 1){
+            return;
+        }
+        userService.updateById(user);
+        System.out.println("updateById执行成功---------------------------------");
     }
 }
