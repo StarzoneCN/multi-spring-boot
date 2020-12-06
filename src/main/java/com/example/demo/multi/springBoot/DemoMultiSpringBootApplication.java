@@ -8,6 +8,10 @@ import org.springframework.scheduling.annotation.EnableAsync;
 @EnableAsync
 public class DemoMultiSpringBootApplication {
 
+	/**
+	 * 
+	 * @param args
+	 */
 	public static void main(String[] args) {
 		SpringApplication.run(DemoMultiSpringBootApplication.class, args);
 	}
