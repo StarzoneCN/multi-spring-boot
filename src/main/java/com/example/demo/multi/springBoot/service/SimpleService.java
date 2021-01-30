@@ -8,6 +8,7 @@ package com.example.demo.multi.springBoot.service;
  */
 public interface SimpleService {
 
+
     void print();
 
     void async(String msg);

@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping("hello")
 public class HelloController {
+
     @Autowired
     private SimpleServiceImpl simpleService;
     @Autowired

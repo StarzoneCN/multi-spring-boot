@@ -14,5 +14,7 @@ public class DemoMultiSpringBootApplication {
 	 */
 	public static void main(String[] args) {
 		SpringApplication.run(DemoMultiSpringBootApplication.class, args);
+
+		/*添加换行*/
 	}
 }

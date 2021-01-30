@@ -20,6 +20,7 @@ import javax.servlet.http.HttpServletRequest;
 @RestController
 @RequestMapping("/")
 public class IndexController {
+
     private static final String MSG_APP_WELCOME = "欢迎来到Spring-Boot的世界！";
 
     @RequestMapping

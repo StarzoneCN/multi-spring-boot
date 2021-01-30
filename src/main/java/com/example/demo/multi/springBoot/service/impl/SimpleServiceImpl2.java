@@ -11,6 +11,7 @@ import org.springframework.stereotype.Component;
  */
 @Component
 public class SimpleServiceImpl2 implements SimpleService {
+
     @Override
     public void print() {
         System.out.println("SimpleServiceImpl2 - 打印了");

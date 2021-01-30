@@ -25,6 +25,7 @@ import java.util.List;
 @RestController
 @RequestMapping("wx")
 public class WxBaseController {
+
     private static final Logger LOGGER = LoggerFactory.getLogger(WxBaseController.class);
     private static final String TOKEN_WX = "fdjsafe432914if3i2ijfew";
 

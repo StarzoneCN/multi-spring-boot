@@ -11,6 +11,7 @@ import lombok.Data;
 @Data
 public class WxIndexCheckVO {
 
+
     /**
      * 微信加密签名
      */
