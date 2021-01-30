@@ -15,6 +15,7 @@ import org.springframework.stereotype.Component;
 @Component
 public class AopTest {
 
+
     @Pointcut("execution(* com.example.demo.multi.springBoot.service.impl.SimpleServiceImpl.*())")
     public void pc() {
     }
